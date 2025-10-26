@@ -3,8 +3,7 @@ import { useCompany } from "@/contexts/CompanyContext";
 import { GradientText } from "@/components/GradientText";
 import { GlassCard } from "@/components/GlassCard";
 import { useEffect, useState, useMemo } from "react";
-import { useDRE } from "@/hooks/useDRE";
-import { useMetrics } from "@/hooks/useMetrics";
+import { useDREReport } from "@/hooks/useDREReport";
 import { useMetricsCache } from "@/hooks/useMetricsCache";
 import { useHistoricalDRE } from "@/hooks/useHistoricalDRE";
 import { useGoals } from "@/hooks/useGoals";
@@ -60,15 +59,14 @@ export default function Dashboard() {
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [comparisonType, setComparisonType] = useState<"none" | "previous-month" | "same-period-last-year">("none");
 
-  const { dreData, loading: dreLoading } = useDRE(selectedMonth, selectedYear);
+  const { data: dreData, isLoading: dreLoading } = useDREReport(selectedMonth, selectedYear);
   const { metricsCache, loading: metricsLoading, refreshMetricsCache } = useMetricsCache(selectedMonth, selectedYear);
   const { data: historicalData, loading: historicalLoading } = useHistoricalDRE(12);
   const { goals, loading: goalsLoading } = useGoals(selectedMonth, selectedYear);
-  const { metricsData: fallbackMetricsData } = useMetrics(selectedMonth, selectedYear);
   const { exportToXLSX, exportToPDF } = useExportDashboard();
   
-  // Use metrics_cache if available, fallback to calculated metrics
-  const metricsData = metricsCache || fallbackMetricsData;
+  // Usar metricsCache como fonte de dados de métricas
+  const metricsData = metricsCache;
 
   const handleExport = (format: "xlsx" | "pdf") => {
     if (!company || !dreData || !metricsData) {
@@ -144,7 +142,7 @@ export default function Dashboard() {
     ? selectedYear - 1
     : selectedYear;
 
-  const { dreData: comparisonDreData } = useDRE(
+  const { data: comparisonDreData } = useDREReport(
     comparisonType !== "none" ? comparisonMonth : selectedMonth,
     comparisonType !== "none" ? comparisonYear : selectedYear
   );

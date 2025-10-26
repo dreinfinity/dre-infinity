@@ -1,9 +1,10 @@
-import { GlassCard } from "@/components/GlassCard";
 import { GradientText } from "@/components/GradientText";
+import { GlassCard } from "@/components/GlassCard";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { HelpCircle, BookOpen, Calculator, TrendingUp } from "lucide-react";
 export default function Help() {
-  return <div className="space-y-6 animate-fade-in">
+  return (
+    <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-4xl font-bold mb-2">
           <GradientText>Central de Ajuda</GradientText>
@@ -286,5 +287,6 @@ export default function Help() {
           </div>
         </div>
       </GlassCard>
-    </div>;
+    </div>
+  );
 }

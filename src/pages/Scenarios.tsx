@@ -3,9 +3,8 @@ import { GradientText } from "@/components/GradientText";
 import { GlassCard } from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-import { useDRE } from "@/hooks/useDRE";
+import { useDREReport } from "@/hooks/useDREReport";
 import { RefreshCw, Calculator } from "lucide-react";
 import {
   Table,
@@ -19,7 +18,7 @@ import { cn } from "@/lib/utils";
 
 export default function Scenarios() {
   const currentDate = new Date();
-  const { dreData } = useDRE(currentDate.getMonth() + 1, currentDate.getFullYear());
+  const { data: dreData } = useDREReport(currentDate.getMonth() + 1, currentDate.getFullYear());
 
   // Variáveis de simulação (percentuais de ajuste)
   const [adjustments, setAdjustments] = useState({

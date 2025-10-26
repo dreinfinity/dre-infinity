@@ -462,6 +462,14 @@ export type Database = {
         Args: { p_company_id: string; p_month: number; p_year: number }
         Returns: undefined
       }
+      get_dre_report: {
+        Args: {
+          company_id_param: string
+          month_param: number
+          year_param: number
+        }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

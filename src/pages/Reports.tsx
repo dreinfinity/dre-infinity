@@ -11,10 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Download } from "lucide-react";
-import { useDRE } from "@/hooks/useDRE";
+import { useDREReport } from "@/hooks/useDREReport";
 import { useCategories } from "@/hooks/useCategories";
 import { useClients } from "@/hooks/useClients";
 import { useExportDRE } from "@/hooks/useExportDRE";
+import { useExportPDF } from "@/hooks/useExportPDF";
 import {
   Table,
   TableBody,
@@ -34,8 +35,9 @@ export default function Reports() {
 
   const { categories } = useCategories();
   const { clients } = useClients();
-  const { dreData, loading } = useDRE(selectedMonth, selectedYear, selectedCategory, selectedClient);
+  const { data: dreData, isLoading: loading } = useDREReport(selectedMonth, selectedYear);
   const { exportToXLSX } = useExportDRE();
+  const { exportDREToPDF } = useExportPDF();
 
   const formatCurrency = (value: number) => {
     if (!isFinite(value) || isNaN(value)) return "R$ 0,00";
@@ -67,13 +69,17 @@ export default function Reports() {
 
   const years = Array.from({ length: 10 }, (_, i) => currentDate.getFullYear() - i);
 
-  const handleExport = () => {
+  const handleExport = (format: "xlsx" | "pdf") => {
     if (!dreData) return;
     
     const categoryName = categories.find(c => c.id === selectedCategory)?.name;
     const clientName = clients.find(c => c.id === selectedClient)?.name;
     
-    exportToXLSX(dreData, selectedMonth, selectedYear, { categoryName, clientName });
+    if (format === "xlsx") {
+      exportToXLSX(dreData, selectedMonth, selectedYear, { categoryName, clientName });
+    } else {
+      exportDREToPDF(dreData, selectedMonth, selectedYear, "Sua Empresa", { categoryName, clientName });
+    }
   };
 
   const dreRows = dreData
@@ -84,7 +90,6 @@ export default function Reports() {
           level: 0,
           isHeader: true,
           bold: true,
-          ah: dreData.horizontalAnalysis?.receitaBruta,
         },
         {
           label: "",
@@ -405,12 +410,21 @@ export default function Reports() {
 
         <Button 
           variant="glow" 
-          className="ml-auto"
-          onClick={handleExport}
+          className="ml-auto mr-2"
+          onClick={() => handleExport("xlsx")}
           disabled={!dreData}
         >
           <Download className="mr-2 h-4 w-4" />
           Exportar XLSX
+        </Button>
+        
+        <Button 
+          variant="outline"
+          onClick={() => handleExport("pdf")}
+          disabled={!dreData}
+        >
+          <Download className="mr-2 h-4 w-4" />
+          Exportar PDF
         </Button>
       </div>
 
@@ -430,7 +444,6 @@ export default function Reports() {
                 <TableHead className="w-[50%]">Conta</TableHead>
                 <TableHead className="text-right">Valor</TableHead>
                 <TableHead className="text-right">% AV</TableHead>
-                <TableHead className="text-right">% AH</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -470,21 +483,6 @@ export default function Reports() {
                       : row.margin !== undefined
                       ? formatPercent(row.margin)
                       : ""}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {row.ah !== undefined ? (
-                      <span
-                        className={cn(
-                          "font-medium",
-                          row.ah > 0 ? "text-green-500" : row.ah < 0 ? "text-red-500" : ""
-                        )}
-                      >
-                        {row.ah > 0 ? "+" : ""}
-                        {formatPercent(row.ah)}
-                      </span>
-                    ) : (
-                      ""
-                    )}
                   </TableCell>
                 </TableRow>
               ))}

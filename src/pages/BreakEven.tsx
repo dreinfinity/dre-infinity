@@ -9,8 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useDRE } from "@/hooks/useDRE";
-import { useCategories } from "@/hooks/useCategories";
+import { useDREReport } from "@/hooks/useDREReport";
+import { useMetricsCache } from "@/hooks/useMetricsCache";
 import { TrendingUp, AlertCircle } from "lucide-react";
 import {
   LineChart,
@@ -29,8 +29,10 @@ export default function BreakEven() {
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
 
-  const { dreData, loading } = useDRE(selectedMonth, selectedYear);
-  const { categories } = useCategories();
+  const { data: dreData, isLoading: dreLoading } = useDREReport(selectedMonth, selectedYear);
+  const { metricsCache, loading: metricsLoading } = useMetricsCache(selectedMonth, selectedYear);
+  
+  const loading = dreLoading || metricsLoading;
 
   const formatCurrency = (value: number) => {
     if (!isFinite(value) || isNaN(value)) return "R$ 0,00";
@@ -62,26 +64,16 @@ export default function BreakEven() {
 
   const years = Array.from({ length: 10 }, (_, i) => currentDate.getFullYear() - i);
 
-  // Calcular custos fixos e variáveis
-  const fixedCosts = categories
-    .filter(c => c.cost_classification === "fixed")
-    .reduce((sum, cat) => sum + (dreData?.despesasOperacionais || 0) / categories.filter(c => c.category_type === "expense").length, 0);
-
-  const variableCosts = dreData?.cmv || 0;
-
-  // Calcular Ponto de Equilíbrio
-  const contributionMargin = (dreData?.receitaLiquida || 0) - variableCosts;
-  const contributionMarginRate = (dreData?.receitaLiquida || 0) > 0 
-    ? contributionMargin / (dreData?.receitaLiquida || 0) 
-    : 0;
-
-  const breakEvenPoint = contributionMarginRate > 0 
-    ? (fixedCosts + (dreData?.despesasOperacionais || 0)) / contributionMarginRate 
-    : 0;
-
+  // Usar dados do cache de métricas (já calculado no backend)
+  const fixedCosts = metricsCache?.fixedCosts || 0;
+  const variableCosts = metricsCache?.variableCosts || 0;
+  const breakEvenPoint = metricsCache?.breakEvenPoint || 0;
+  const contributionMargin = metricsCache?.contributionMargin || 0;
+  const safetyMarginPercent = metricsCache?.safetyMargin || 0;
   const safetyMargin = (dreData?.receitaLiquida || 0) - breakEvenPoint;
-  const safetyMarginPercent = (dreData?.receitaLiquida || 0) > 0 
-    ? (safetyMargin / (dreData?.receitaLiquida || 0)) * 100 
+  
+  const contributionMarginRate = (dreData?.receitaLiquida || 0) > 0 
+    ? (contributionMargin / (dreData?.receitaLiquida || 0))
     : 0;
 
   // Dados para o gráfico

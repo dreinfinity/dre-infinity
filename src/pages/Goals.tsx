@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useDRE } from "@/hooks/useDRE";
+import { useDREReport } from "@/hooks/useDREReport";
 import { useGoals } from "@/hooks/useGoals";
 import { Target, TrendingUp, TrendingDown } from "lucide-react";
 import {
@@ -29,7 +29,7 @@ export default function Goals() {
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
 
-  const { dreData, loading } = useDRE(selectedMonth, selectedYear);
+  const { data: dreData, isLoading: loading } = useDREReport(selectedMonth, selectedYear);
   const { getGoalByMetric, upsertGoal, loading: goalsLoading } = useGoals(selectedMonth, selectedYear);
   
   // Get goals from database or use defaults
