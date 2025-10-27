@@ -18,7 +18,7 @@ interface TaxConfiguration {
   irpj_additional_threshold: number;
   csll_rate: number;
   regime_type: string;
-  last_updated: string;
+  updated_at: string;
   created_at: string;
 }
 

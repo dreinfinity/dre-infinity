@@ -299,9 +299,9 @@ export type Database = {
           irpj_additional_threshold: number | null
           irpj_rate: number | null
           iss_rate: number | null
-          last_updated: string | null
           pis_rate: number | null
           regime_type: string | null
+          updated_at: string | null
           use_das: boolean | null
         }
         Insert: {
@@ -317,9 +317,9 @@ export type Database = {
           irpj_additional_threshold?: number | null
           irpj_rate?: number | null
           iss_rate?: number | null
-          last_updated?: string | null
           pis_rate?: number | null
           regime_type?: string | null
+          updated_at?: string | null
           use_das?: boolean | null
         }
         Update: {
@@ -335,9 +335,9 @@ export type Database = {
           irpj_additional_threshold?: number | null
           irpj_rate?: number | null
           iss_rate?: number | null
-          last_updated?: string | null
           pis_rate?: number | null
           regime_type?: string | null
+          updated_at?: string | null
           use_das?: boolean | null
         }
         Relationships: [
