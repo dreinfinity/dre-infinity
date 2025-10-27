@@ -17,6 +17,7 @@ import Reports from "./pages/Reports";
 import BreakEven from "./pages/BreakEven";
 import Goals from "./pages/Goals";
 import Scenarios from "./pages/Scenarios";
+import CashFlow from "./pages/CashFlow";
 import DebugData from "./pages/DebugData";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
@@ -108,6 +109,16 @@ const App = () => (
                   <ProtectedRoute>
                     <DashboardLayout>
                       <Scenarios />
+                    </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/cash-flow"
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout>
+                      <CashFlow />
                     </DashboardLayout>
                   </ProtectedRoute>
                 }

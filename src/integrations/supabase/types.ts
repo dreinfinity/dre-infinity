@@ -14,6 +14,120 @@ export type Database = {
   }
   public: {
     Tables: {
+      cash_tags: {
+        Row: {
+          color: string
+          company_id: string
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          color?: string
+          company_id: string
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          color?: string
+          company_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_tags_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_transactions: {
+        Row: {
+          amount: number
+          company_id: string
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          related_vault_type: string | null
+          tags: Json | null
+          transaction_type: string
+          vault_type: string
+        }
+        Insert: {
+          amount: number
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          description: string
+          id?: string
+          related_vault_type?: string | null
+          tags?: Json | null
+          transaction_type: string
+          vault_type: string
+        }
+        Update: {
+          amount?: number
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          related_vault_type?: string | null
+          tags?: Json | null
+          transaction_type?: string
+          vault_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_transactions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_vaults: {
+        Row: {
+          company_id: string
+          created_at: string
+          current_balance: number
+          id: string
+          updated_at: string
+          vault_type: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          current_balance?: number
+          id?: string
+          updated_at?: string
+          vault_type: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          current_balance?: number
+          id?: string
+          updated_at?: string
+          vault_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_vaults_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           company_id: string
@@ -462,6 +576,7 @@ export type Database = {
         Args: { p_company_id: string; p_month: number; p_year: number }
         Returns: undefined
       }
+      calculate_cash_balances: { Args: { p_company_id: string }; Returns: Json }
       get_dre_report: {
         Args: {
           company_id_param: string
@@ -476,6 +591,17 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      transfer_between_vaults: {
+        Args: {
+          p_amount: number
+          p_company_id: string
+          p_description: string
+          p_from_vault: string
+          p_tags?: Json
+          p_to_vault: string
+        }
+        Returns: Json
       }
     }
     Enums: {

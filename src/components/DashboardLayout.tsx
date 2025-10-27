@@ -17,6 +17,7 @@ import {
   Target,
   Calculator,
   Activity,
+  Wallet,
   HelpCircle,
 } from "lucide-react";
 import {
@@ -46,7 +47,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     { icon: Activity, label: "Ponto de Equilíbrio", path: "/break-even" },
     { icon: Target, label: "Metas e Orçamento", path: "/goals" },
     { icon: Calculator, label: "Cenários", path: "/scenarios" },
-    
+    { icon: Wallet, label: "Caixa", path: "/cash-flow" },
     { icon: Settings, label: "Configurações", path: "/settings" },
     { icon: HelpCircle, label: "Ajuda", path: "/help" },
   ];
