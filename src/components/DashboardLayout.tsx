@@ -2,7 +2,9 @@ import { ReactNode, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCompany } from "@/contexts/CompanyContext";
+import { useSubscription } from "@/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { GradientText } from "@/components/GradientText";
 import {
   LayoutDashboard,
@@ -19,6 +21,7 @@ import {
   Activity,
   Wallet,
   HelpCircle,
+  Sparkles,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -36,6 +39,7 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, signOut } = useAuth();
   const { company, companies, setCurrentCompany } = useCompany();
+  const { currentPlan, isTrial, daysUntilExpiry } = useSubscription();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -53,6 +57,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  const getPlanBadgeVariant = () => {
+    if (currentPlan === "infinity") return "default";
+    if (currentPlan === "growth") return "secondary";
+    return "outline";
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -75,14 +85,40 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </Link>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
+              {/* Trial Badge */}
+              {isTrial && daysUntilExpiry > 0 && (
+                <Badge variant="outline" className="hidden md:flex text-primary border-primary">
+                  Trial: {Math.ceil(daysUntilExpiry)} dias
+                </Badge>
+              )}
+
+              {/* Plan Badge */}
+              <Badge 
+                variant={getPlanBadgeVariant()}
+                className="hidden sm:flex cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => navigate("/pricing")}
+              >
+                {currentPlan === "infinity" ? "Infinity" : currentPlan === "growth" ? "Growth" : "Functional"}
+              </Badge>
+
+              {/* Upgrade Button */}
+              <Button
+                onClick={() => navigate("/pricing")}
+                size="sm"
+                className="bg-gradient-primary hover:opacity-90 transition-opacity"
+              >
+                <Sparkles className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Upgrade</span>
+              </Button>
+
               {/* Company Selector */}
               {company && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="gap-2">
                       <Building2 size={16} />
-                      <span className="hidden sm:inline">{company.name}</span>
+                      <span className="hidden md:inline">{company.name}</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">

@@ -399,6 +399,48 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string
+          current_period_start: string
+          id: string
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          trial_ends_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string
+          current_period_start?: string
+          id?: string
+          plan?: Database["public"]["Enums"]["subscription_plan"]
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       tax_configurations: {
         Row: {
           cofins_rate: number | null
@@ -577,6 +619,10 @@ export type Database = {
         Returns: undefined
       }
       calculate_cash_balances: { Args: { p_company_id: string }; Returns: Json }
+      check_feature_access: {
+        Args: { p_feature: string; p_user_id: string }
+        Returns: boolean
+      }
       get_dre_report: {
         Args: {
           company_id_param: string
@@ -585,6 +631,7 @@ export type Database = {
         }
         Returns: Json
       }
+      get_subscription_details: { Args: { p_user_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -608,6 +655,8 @@ export type Database = {
       app_role: "admin" | "manager" | "user"
       category_type: "revenue" | "cost" | "expense"
       cost_classification: "fixed" | "variable"
+      subscription_plan: "functional" | "growth" | "infinity"
+      subscription_status: "trial" | "active" | "cancelled" | "expired"
       tax_regime: "simples_nacional" | "lucro_presumido" | "lucro_real"
     }
     CompositeTypes: {
@@ -739,6 +788,8 @@ export const Constants = {
       app_role: ["admin", "manager", "user"],
       category_type: ["revenue", "cost", "expense"],
       cost_classification: ["fixed", "variable"],
+      subscription_plan: ["functional", "growth", "infinity"],
+      subscription_status: ["trial", "active", "cancelled", "expired"],
       tax_regime: ["simples_nacional", "lucro_presumido", "lucro_real"],
     },
   },

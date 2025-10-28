@@ -20,6 +20,7 @@ import Scenarios from "./pages/Scenarios";
 import CashFlow from "./pages/CashFlow";
 import DebugData from "./pages/DebugData";
 import Help from "./pages/Help";
+import Pricing from "./pages/Pricing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -140,6 +141,14 @@ const App = () => (
                     <DashboardLayout>
                       <Help />
                     </DashboardLayout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/pricing"
+                element={
+                  <ProtectedRoute>
+                    <Pricing />
                   </ProtectedRoute>
                 }
               />
