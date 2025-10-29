@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export type SubscriptionPlan = "functional" | "growth" | "infinity";
 export type SubscriptionStatus = "trial" | "active" | "cancelled" | "expired";
+export type BillingPeriod = "monthly" | "semiannual" | "annual";
 
 export interface SubscriptionDetails {
   plan: SubscriptionPlan;
@@ -17,58 +18,78 @@ export interface SubscriptionDetails {
   daysUntilExpiry: number;
 }
 
+export interface PlanPricing {
+  monthly: number;
+  semiannual: number;
+  annual: number;
+}
+
 export const PLAN_FEATURES = {
   functional: {
     name: "Functional",
-    price: "R$ 97",
-    monthlyPrice: 97,
+    pricing: {
+      monthly: 97,
+      semiannual: 92.15, // 5% desconto
+      annual: 87.30, // 10% desconto
+    },
     features: [
-      "Dashboard completo",
-      "Lançamentos ilimitados",
-      "Relatórios DRE básicos",
-      "1 empresa",
+      "Dashboard completo com KPIs essenciais",
+      "Lançamentos ilimitados de transações",
+      "Relatórios DRE básicos automatizados",
+      "1 empresa cadastrada",
+      "Exportação de relatórios (10/mês)",
       "Suporte por email",
     ],
     limits: {
       companies: 1,
-      transactions: null, // ilimitado
-      exports: 10, // por mês
+      transactions: null,
+      exports: 10,
     },
   },
   growth: {
     name: "Growth",
-    price: "R$ 197",
-    monthlyPrice: 197,
+    pricing: {
+      monthly: 197,
+      semiannual: 187.15, // 5% desconto
+      annual: 177.30, // 10% desconto
+    },
     features: [
       "Tudo do Functional +",
-      "Metas e orçamento",
-      "Análise horizontal",
-      "Break-even e cenários",
+      "Metas e planejamento orçamentário",
+      "Análise horizontal e vertical completa",
+      "Break-even e simulação de cenários",
       "Exportação Excel ilimitada",
-      "Até 3 empresas",
+      "Até 3 empresas gerenciadas",
+      "Módulo de Gestão de Clientes",
       "Suporte prioritário",
     ],
     limits: {
       companies: 3,
       transactions: null,
-      exports: null, // ilimitado
+      exports: null,
     },
   },
   infinity: {
     name: "Infinity",
-    price: "R$ 397",
-    monthlyPrice: 397,
+    pricing: {
+      monthly: 397,
+      semiannual: 377.15, // 5% desconto
+      annual: 357.30, // 10% desconto
+    },
     features: [
       "Tudo do Growth +",
       "Empresas ilimitadas",
-      "Módulo Caixa completo",
-      "API de integração",
-      "Relatórios personalizados",
-      "Suporte 24/7 prioritário",
-      "Consultoria mensal inclusa",
+      "Módulo Caixa completo com cofres virtuais",
+      "Dashboard avançado com métricas personalizadas",
+      "Análise de CAC, LTV e ROI detalhada",
+      "API de integração disponível",
+      "Relatórios personalizados ilimitados",
+      "Exportação em múltiplos formatos",
+      "Suporte 24/7 com prioridade máxima",
+      "Consultoria financeira mensal inclusa",
     ],
     limits: {
-      companies: null, // ilimitado
+      companies: null,
       transactions: null,
       exports: null,
     },
@@ -111,22 +132,23 @@ export function useSubscription() {
     return data || false;
   };
 
-  const upgradePlan = useMutation({
-    mutationFn: async (newPlan: SubscriptionPlan) => {
-      if (!user?.id) throw new Error("User not authenticated");
+  const createCheckoutSession = useMutation({
+    mutationFn: async ({ plan, period }: { plan: SubscriptionPlan; period: BillingPeriod }) => {
+      if (!user?.id) throw new Error("Usuário não autenticado");
 
-      // Aqui será integrado o Stripe no futuro
-      // Por enquanto, apenas atualiza o plano localmente
-      const { error } = await supabase
-        .from("subscriptions")
-        .update({
-          plan: newPlan,
-          status: "active" as SubscriptionStatus,
-          current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        })
-        .eq("user_id", user.id);
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: {
+          plan,
+          period,
+          userId: user.id,
+        },
+      });
 
       if (error) throw error;
+      if (!data?.url) throw new Error("URL de checkout não gerada");
+
+      // Redirecionar para checkout do Stripe
+      window.location.href = data.url;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
@@ -153,8 +175,8 @@ export function useSubscription() {
     subscription,
     isLoading,
     checkFeatureAccess,
-    upgradePlan: upgradePlan.mutate,
-    upgrading: upgradePlan.isPending,
+    createCheckoutSession: createCheckoutSession.mutate,
+    creatingCheckout: createCheckoutSession.isPending,
     getPlanInfo,
     currentPlan: subscription?.plan || "functional",
     isActive: subscription?.isActive || false,
