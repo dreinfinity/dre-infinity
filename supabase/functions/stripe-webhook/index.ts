@@ -1,10 +1,10 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@14.21.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, stripe-signature',
 };
 
 serve(async (req) => {
@@ -61,7 +61,8 @@ serve(async (req) => {
           break;
         }
 
-        // Atualizar assinatura
+        const periodDays = period === 'annual' ? 365 : period === 'semiannual' ? 180 : 30;
+
         await supabase
           .from('subscriptions')
           .upsert({
@@ -71,7 +72,7 @@ serve(async (req) => {
             stripe_customer_id: session.customer as string,
             stripe_subscription_id: session.subscription as string,
             current_period_start: new Date().toISOString(),
-            current_period_end: new Date(Date.now() + (period === 'annual' ? 365 : period === 'semiannual' ? 180 : 30) * 24 * 60 * 60 * 1000).toISOString(),
+            current_period_end: new Date(Date.now() + periodDays * 24 * 60 * 60 * 1000).toISOString(),
             trial_ends_at: null,
           });
 
@@ -83,7 +84,6 @@ serve(async (req) => {
         const subscription = event.data.object as Stripe.Subscription;
         const customerId = subscription.customer as string;
 
-        // Buscar usuário pelo customer_id
         const { data: userData } = await supabase
           .from('subscriptions')
           .select('user_id')
@@ -95,11 +95,17 @@ serve(async (req) => {
           break;
         }
 
-        // Atualizar status da assinatura
+        const statusMap: Record<string, string> = {
+          'active': 'active',
+          'canceled': 'cancelled',
+          'unpaid': 'expired',
+          'past_due': 'expired',
+        };
+
         await supabase
           .from('subscriptions')
           .update({
-            status: subscription.status === 'active' ? 'active' : subscription.status === 'canceled' ? 'cancelled' : 'expired',
+            status: statusMap[subscription.status] || 'expired',
             current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
             current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
           })
@@ -134,7 +140,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Erro no webhook:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Erro desconhecido' }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,

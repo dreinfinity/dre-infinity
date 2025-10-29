@@ -71,7 +71,7 @@ export function UpgradeModal({ open, onOpenChange, feature, currentPlan = "funct
                 <div>
                   <h3 className="text-2xl font-bold">{planInfo.name}</h3>
                   <p className="text-3xl font-bold text-primary">
-                    {planInfo.price}
+                    R$ {planInfo.pricing.monthly.toFixed(2)}
                     <span className="text-sm text-muted-foreground font-normal">/mês</span>
                   </p>
                 </div>
