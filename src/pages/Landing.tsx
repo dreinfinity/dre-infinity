@@ -114,13 +114,13 @@ export default function Landing() {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button variant="hero" size="lg" className="text-lg px-8" asChild>
-                <Link to="/auth">
+                <Link to="/signup">
                   Experimentar Grátis
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </Button>
               <Button variant="glass" size="lg" className="text-lg px-8" asChild>
-                <Link to="/auth">
+                <Link to="/login">
                   Fazer Login
                 </Link>
               </Button>
@@ -180,7 +180,7 @@ export default function Landing() {
                     mais moderna e intuitiva do mercado.
                   </p>
                   <Button variant="hero" size="lg" asChild>
-                    <Link to="/auth">
+                    <Link to="/signup">
                       Começar Agora
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
@@ -278,7 +278,7 @@ export default function Landing() {
                       variant={isPopular ? 'default' : 'outline'}
                       size="lg"
                     >
-                      <Link to="/auth">
+                      <Link to={`/signup?plan=${planKey}`}>
                         Começar Agora
                       </Link>
                     </Button>
@@ -304,7 +304,7 @@ export default function Landing() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button variant="hero" size="lg" className="text-lg px-8" asChild>
-                <Link to="/auth">
+                <Link to="/signup">
                   Começar Gratuitamente
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>

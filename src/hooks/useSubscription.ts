@@ -29,8 +29,8 @@ export const PLAN_FEATURES = {
     name: "Functional",
     pricing: {
       monthly: 97,
-      semiannual: 92.15, // 5% desconto
-      annual: 87.30, // 10% desconto
+      semiannual: 90, // 7% desconto, arredondado
+      annual: 82, // 15% desconto, arredondado
     },
     features: [
       "Dashboard completo com KPIs essenciais",
@@ -50,8 +50,8 @@ export const PLAN_FEATURES = {
     name: "Growth",
     pricing: {
       monthly: 197,
-      semiannual: 187.15, // 5% desconto
-      annual: 177.30, // 10% desconto
+      semiannual: 183, // 7% desconto, arredondado
+      annual: 167, // 15% desconto, arredondado
     },
     features: [
       "Tudo do Functional +",
@@ -73,8 +73,8 @@ export const PLAN_FEATURES = {
     name: "Infinity",
     pricing: {
       monthly: 397,
-      semiannual: 377.15, // 5% desconto
-      annual: 357.30, // 10% desconto
+      semiannual: 369, // 7% desconto, arredondado
+      annual: 337, // 15% desconto, arredondado
     },
     features: [
       "Tudo do Growth +",
