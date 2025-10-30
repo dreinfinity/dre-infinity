@@ -631,7 +631,19 @@ export type Database = {
         }
         Returns: Json
       }
-      get_subscription_details: { Args: { p_user_id: string }; Returns: Json }
+      get_subscription_details: {
+        Args: { p_user_id: string }
+        Returns: {
+          current_period_end: string
+          current_period_start: string
+          days_until_expiry: number
+          is_active: boolean
+          is_trial: boolean
+          plan: Database["public"]["Enums"]["subscription_plan"]
+          status: Database["public"]["Enums"]["subscription_status"]
+          trial_ends_at: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
