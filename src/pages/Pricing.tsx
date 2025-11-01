@@ -8,9 +8,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useSubscription, PLAN_FEATURES, BillingPeriod, SubscriptionPlan } from "@/hooks/useSubscription";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Pricing() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { createCheckoutSession, creatingCheckout, currentPlan, daysUntilExpiry, isTrial } = useSubscription();
   const [selectedPeriods, setSelectedPeriods] = useState<Record<string, BillingPeriod>>({
     functional: "monthly",
@@ -19,8 +21,13 @@ export default function Pricing() {
   });
 
   const handleSelectPlan = (plan: SubscriptionPlan) => {
-    const period = selectedPeriods[plan];
-    createCheckoutSession({ plan, period });
+    if (user) {
+      // Se logado, vai para checkout
+      navigate(`/checkout?plan=${plan}`);
+    } else {
+      // Se não logado, vai para cadastro
+      navigate(`/signup?plan=${plan}`);
+    }
   };
 
   const getDiscountLabel = (period: BillingPeriod) => {
@@ -144,7 +151,7 @@ export default function Pricing() {
                 </ul>
 
                 <Button
-                  onClick={() => navigate(`/signup?plan=${plan}`)}
+                  onClick={() => handleSelectPlan(plan)}
                   disabled={isCurrentPlan}
                   variant={isPopular ? "glow" : "outline"}
                   className="w-full"

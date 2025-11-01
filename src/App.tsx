@@ -23,6 +23,7 @@ import CashFlow from "./pages/CashFlow";
 import DebugData from "./pages/DebugData";
 import Help from "./pages/Help";
 import Pricing from "./pages/Pricing";
+import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,11 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/checkout" element={
+                <ProtectedRoute>
+                  <Checkout />
+                </ProtectedRoute>
+              } />
               <Route
                 path="/company-setup"
                 element={

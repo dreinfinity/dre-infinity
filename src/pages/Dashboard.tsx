@@ -10,6 +10,7 @@ import { useGoals } from "@/hooks/useGoals";
 import { useExportDashboard } from "@/hooks/useExportDashboard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { MetricInfoPopover } from "@/components/dashboard/MetricInfoPopover";
 import {
   Select,
@@ -55,6 +56,7 @@ export default function Dashboard() {
   const { company, companies, loading: companyLoading } = useCompany();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const currentDate = new Date();
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
@@ -130,6 +132,12 @@ export default function Dashboard() {
       });
       
       if (error) throw error;
+      
+      // Invalidar todas as queries relacionadas ao dashboard para forçar refresh
+      await queryClient.invalidateQueries({ queryKey: ['dreReport'] });
+      await queryClient.invalidateQueries({ queryKey: ['metricsCache'] });
+      await queryClient.invalidateQueries({ queryKey: ['historicalDRE'] });
+      await queryClient.invalidateQueries({ queryKey: ['goals'] });
       
       toast({
         title: "✅ Métricas Recalculadas",

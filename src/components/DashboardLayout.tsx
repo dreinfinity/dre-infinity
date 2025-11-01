@@ -168,11 +168,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Sidebar Toggle Button - External Floating */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className={`fixed top-20 z-50 p-2 bg-gradient-to-br from-green-500 to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${
-          sidebarOpen ? "left-[13.5rem]" : "left-4"
-        } lg:flex hidden`}
+        className={`fixed top-20 z-50 p-2.5 bg-gradient-to-br from-green-500 to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${
+          sidebarOpen ? "left-[14.5rem]" : "left-4"
+        } lg:flex hidden animate-in fade-in`}
       >
-        <Menu size={16} className={`text-white transition-transform duration-300 ${sidebarOpen ? "rotate-90" : ""}`} />
+        {sidebarOpen ? (
+          <X size={16} className="text-white transition-transform duration-300" />
+        ) : (
+          <Menu size={16} className="text-white transition-transform duration-300" />
+        )}
       </button>
 
       {/* Sidebar */}
