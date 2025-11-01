@@ -160,24 +160,24 @@ export default function Scenarios() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Painel de Ajustes */}
-        <GlassCard className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold">
+        <GlassCard className="p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-semibold">
               <GradientText>Ajustar Variáveis</GradientText>
             </h2>
             <Button variant="outline" size="sm" onClick={resetAdjustments}>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Resetar
+              <RefreshCw className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+              <span className="text-xs sm:text-sm">Resetar</span>
             </Button>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <Label>Receita Bruta</Label>
-                <span className="text-sm font-semibold">
+                <Label className="text-xs sm:text-sm">Receita Bruta</Label>
+                <span className="text-xs sm:text-sm font-semibold">
                   {adjustments.receita > 0 ? "+" : ""}
                   {adjustments.receita}%
                 </span>
@@ -199,8 +199,8 @@ export default function Scenarios() {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <Label>CMV (Custo das Mercadorias Vendidas)</Label>
-                <span className="text-sm font-semibold">
+                <Label className="text-xs sm:text-sm">CMV (Custo das Mercadorias Vendidas)</Label>
+                <span className="text-xs sm:text-sm font-semibold">
                   {adjustments.cmv > 0 ? "+" : ""}
                   {adjustments.cmv}%
                 </span>
@@ -222,8 +222,8 @@ export default function Scenarios() {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <Label>Despesas Operacionais</Label>
-                <span className="text-sm font-semibold">
+                <Label className="text-xs sm:text-sm">Despesas Operacionais</Label>
+                <span className="text-xs sm:text-sm font-semibold">
                   {adjustments.despesasOperacionais > 0 ? "+" : ""}
                   {adjustments.despesasOperacionais}%
                 </span>
@@ -245,8 +245,8 @@ export default function Scenarios() {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <Label>Despesas Financeiras</Label>
-                <span className="text-sm font-semibold">
+                <Label className="text-xs sm:text-sm">Despesas Financeiras</Label>
+                <span className="text-xs sm:text-sm font-semibold">
                   {adjustments.despesasFinanceiras > 0 ? "+" : ""}
                   {adjustments.despesasFinanceiras}%
                 </span>
@@ -269,24 +269,24 @@ export default function Scenarios() {
         </GlassCard>
 
         {/* Resumo do Impacto */}
-        <GlassCard className="p-6">
-          <h2 className="text-2xl font-semibold mb-6">
+        <GlassCard className="p-4 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">
             <GradientText>Impacto no Resultado</GradientText>
           </h2>
 
-          <div className="space-y-4">
-            <div className="p-4 bg-primary/5 rounded-lg">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="p-3 sm:p-4 bg-primary/5 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                   Receita Líquida
                 </span>
-                <Calculator className="w-4 h-4 text-primary" />
+                <Calculator className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
               </div>
-              <p className="text-2xl font-bold">
+              <p className="text-xl sm:text-2xl font-bold">
                 <GradientText>{formatCurrency(simulatedReceitaLiquida)}</GradientText>
               </p>
               <p className={cn(
-                "text-sm font-semibold mt-1",
+                "text-xs sm:text-sm font-semibold mt-1",
                 difReceitaLiquida >= 0 ? "text-green-500" : "text-red-500"
               )}>
                 {difReceitaLiquida >= 0 ? "+" : ""}
@@ -294,18 +294,18 @@ export default function Scenarios() {
               </p>
             </div>
 
-            <div className="p-4 bg-primary/5 rounded-lg">
+            <div className="p-3 sm:p-4 bg-primary/5 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                   Lucro Bruto
                 </span>
-                <Calculator className="w-4 h-4 text-primary" />
+                <Calculator className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
               </div>
-              <p className="text-2xl font-bold">
+              <p className="text-xl sm:text-2xl font-bold">
                 <GradientText>{formatCurrency(simulatedLucroBruto)}</GradientText>
               </p>
               <p className={cn(
-                "text-sm font-semibold mt-1",
+                "text-xs sm:text-sm font-semibold mt-1",
                 difLucroBruto >= 0 ? "text-green-500" : "text-red-500"
               )}>
                 {difLucroBruto >= 0 ? "+" : ""}
@@ -313,18 +313,18 @@ export default function Scenarios() {
               </p>
             </div>
 
-            <div className="p-4 bg-primary/5 rounded-lg">
+            <div className="p-3 sm:p-4 bg-primary/5 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                   Lucro Operacional
                 </span>
-                <Calculator className="w-4 h-4 text-primary" />
+                <Calculator className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
               </div>
-              <p className="text-2xl font-bold">
+              <p className="text-xl sm:text-2xl font-bold">
                 <GradientText>{formatCurrency(simulatedLucroOp)}</GradientText>
               </p>
               <p className={cn(
-                "text-sm font-semibold mt-1",
+                "text-xs sm:text-sm font-semibold mt-1",
                 difLucroOp >= 0 ? "text-green-500" : "text-red-500"
               )}>
                 {difLucroOp >= 0 ? "+" : ""}
@@ -332,18 +332,18 @@ export default function Scenarios() {
               </p>
             </div>
 
-            <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary/20">
+            <div className="p-3 sm:p-4 bg-primary/10 rounded-lg border-2 border-primary/20">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="text-xs sm:text-sm font-medium text-muted-foreground">
                   Lucro Líquido
                 </span>
-                <Calculator className="w-4 h-4 text-primary" />
+                <Calculator className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
               </div>
-              <p className="text-3xl font-bold">
+              <p className="text-2xl sm:text-3xl font-bold">
                 <GradientText>{formatCurrency(simulatedLucroLiquido)}</GradientText>
               </p>
               <p className={cn(
-                "text-base font-bold mt-1",
+                "text-sm sm:text-base font-bold mt-1",
                 difLucroLiquido >= 0 ? "text-green-500" : "text-red-500"
               )}>
                 {difLucroLiquido >= 0 ? "+" : ""}
@@ -356,51 +356,53 @@ export default function Scenarios() {
 
       {/* Comparação Detalhada */}
       <GlassCard>
-        <div className="p-6">
-          <h2 className="text-2xl font-semibold mb-4">
+        <div className="p-4 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-4">
             <GradientText>Comparação Detalhada</GradientText>
           </h2>
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Linha DRE</TableHead>
-              <TableHead className="text-right">Atual</TableHead>
-              <TableHead className="text-right">Simulado</TableHead>
-              <TableHead className="text-right">Diferença</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {comparisons.map((row, index) => (
-              <TableRow
-                key={index}
-                className={cn(
-                  row.highlight && "bg-primary/5",
-                  row.primary && "bg-primary/10 font-bold"
-                )}
-              >
-                <TableCell className={cn(row.highlight && "font-semibold")}>
-                  {row.label}
-                </TableCell>
-                <TableCell className="text-right">
-                  {formatCurrency(Math.abs(row.current))}
-                </TableCell>
-                <TableCell className="text-right font-medium">
-                  {formatCurrency(Math.abs(row.simulated))}
-                </TableCell>
-                <TableCell
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-xs sm:text-sm">Linha DRE</TableHead>
+                <TableHead className="text-right text-xs sm:text-sm">Atual</TableHead>
+                <TableHead className="text-right text-xs sm:text-sm">Simulado</TableHead>
+                <TableHead className="text-right text-xs sm:text-sm">Diferença</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {comparisons.map((row, index) => (
+                <TableRow
+                  key={index}
                   className={cn(
-                    "text-right font-semibold",
-                    row.difference > 0 ? "text-green-500" : row.difference < 0 ? "text-red-500" : ""
+                    row.highlight && "bg-primary/5",
+                    row.primary && "bg-primary/10 font-bold"
                   )}
                 >
-                  {row.difference >= 0 ? "+" : ""}
-                  {formatCurrency(row.difference)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                  <TableCell className={cn(row.highlight && "font-semibold", "text-xs sm:text-sm")}>
+                    {row.label}
+                  </TableCell>
+                  <TableCell className="text-right text-xs sm:text-sm">
+                    {formatCurrency(Math.abs(row.current))}
+                  </TableCell>
+                  <TableCell className="text-right font-medium text-xs sm:text-sm">
+                    {formatCurrency(Math.abs(row.simulated))}
+                  </TableCell>
+                  <TableCell
+                    className={cn(
+                      "text-right font-semibold text-xs sm:text-sm",
+                      row.difference > 0 ? "text-green-500" : row.difference < 0 ? "text-red-500" : ""
+                    )}
+                  >
+                    {row.difference >= 0 ? "+" : ""}
+                    {formatCurrency(row.difference)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </GlassCard>
     </div>
   );

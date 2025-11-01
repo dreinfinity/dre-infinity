@@ -204,92 +204,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section className="py-20 relative" id="planos">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <GradientText>Planos e Preços</GradientText>
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              7 dias grátis para testar. Escolha o plano ideal para seu negócio.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
-            {Object.entries(PLAN_FEATURES).map(([planKey, planInfo]) => {
-              const isPopular = planKey === 'growth';
-              
-              return (
-                <GlassCard
-                  key={planKey}
-                  className={`relative overflow-hidden transition-all duration-300 ${
-                    isPopular ? 'ring-2 ring-primary scale-105' : ''
-                  }`}
-                >
-                  {isPopular && (
-                    <div className="absolute top-0 right-0 bg-gradient-primary text-white px-4 py-1 text-xs font-semibold rounded-bl-lg">
-                      MAIS POPULAR
-                    </div>
-                  )}
-
-                  <div className="p-6 sm:p-8 space-y-6">
-                    <div className="space-y-4">
-                      <div className={`p-3 rounded-xl bg-gradient-to-br ${
-                        planKey === 'growth' ? 'from-emerald-500 to-teal-500' :
-                        planKey === 'infinity' ? 'from-violet-500 to-purple-500' :
-                        'from-blue-500 to-cyan-500'
-                      } w-fit`}>
-                        <div className="text-white">
-                          {planKey === 'growth' ? <Zap className="w-8 h-8" /> :
-                           planKey === 'infinity' ? <Crown className="w-8 h-8" /> :
-                           <Sparkles className="w-8 h-8" />}
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <h3 className="text-2xl font-bold mb-2">{planInfo.name}</h3>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-4xl font-bold text-primary">
-                            R$ {planInfo.pricing.monthly.toFixed(2)}
-                          </span>
-                          <span className="text-lg text-muted-foreground">/mês</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          7 dias grátis • Cancele quando quiser
-                        </p>
-                      </div>
-                    </div>
-
-                    <ul className="space-y-3">
-                      {planInfo.features.slice(0, 6).map((feature, index) => (
-                        <li key={index} className="flex items-start gap-3">
-                          <CheckCircle2 className="w-5 h-5 text-success shrink-0 mt-0.5" />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button
-                      asChild
-                      className={`w-full ${
-                        isPopular ? 'bg-gradient-primary hover:opacity-90' : ''
-                      }`}
-                      variant={isPopular ? 'default' : 'outline'}
-                      size="lg"
-                    >
-                      <Link to={`/signup?plan=${planKey}`}>
-                        Começar Agora
-                      </Link>
-                    </Button>
-                  </div>
-                </GlassCard>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-20 relative">
         <div className="container mx-auto px-4">
@@ -310,7 +224,7 @@ export default function Landing() {
                 </Link>
               </Button>
               <Button variant="glass" size="lg" className="text-lg px-8" asChild>
-                <a href="#planos">Ver Planos</a>
+                <Link to="/pricing">Ver Planos</Link>
               </Button>
             </div>
             <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto pt-8">

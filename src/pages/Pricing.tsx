@@ -86,50 +86,51 @@ export default function Pricing() {
                 )}
 
                 <div className="text-center mb-6">
-                  <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
+                  <h3 className="text-3xl font-bold mb-6 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
                     {PLAN_FEATURES[plan].name}
                   </h3>
                   
-                  <div className="mb-6">
-                    <RadioGroup
-                      value={selectedPeriod}
-                      onValueChange={(value) => setPeriodForPlan(plan, value as BillingPeriod)}
-                      className="space-y-2"
+                  <div className="flex gap-2 mb-6 justify-center">
+                    <Button
+                      type="button"
+                      variant={selectedPeriod === "monthly" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setPeriodForPlan(plan, "monthly")}
+                      className="flex-1"
                     >
-                      <div className="flex items-center justify-between p-3 rounded-lg border border-border/50 hover:border-primary/50 transition-colors">
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="monthly" id={`${plan}-monthly`} />
-                          <Label htmlFor={`${plan}-monthly`} className="cursor-pointer">Mensal</Label>
-                        </div>
-                        <span className="font-bold">R$ {PLAN_FEATURES[plan].pricing.monthly}</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between p-3 rounded-lg border border-border/50 hover:border-primary/50 transition-colors">
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="semiannual" id={`${plan}-semiannual`} />
-                          <Label htmlFor={`${plan}-semiannual`} className="cursor-pointer">
-                            Semestral
-                            <span className="ml-2 text-xs text-green-500">7% OFF</span>
-                          </Label>
-                        </div>
-                        <span className="font-bold">R$ {PLAN_FEATURES[plan].pricing.semiannual}</span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between p-3 rounded-lg border border-border/50 hover:border-primary/50 transition-colors">
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="annual" id={`${plan}-annual`} />
-                          <Label htmlFor={`${plan}-annual`} className="cursor-pointer">
-                            Anual
-                            <span className="ml-2 text-xs text-green-500">15% OFF</span>
-                          </Label>
-                        </div>
-                        <span className="font-bold">R$ {PLAN_FEATURES[plan].pricing.annual}</span>
-                      </div>
-                    </RadioGroup>
+                      Mensal
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={selectedPeriod === "semiannual" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setPeriodForPlan(plan, "semiannual")}
+                      className="flex-1"
+                    >
+                      Semestral
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={selectedPeriod === "annual" ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setPeriodForPlan(plan, "annual")}
+                      className="flex-1"
+                    >
+                      Anual
+                    </Button>
                   </div>
 
-                  <div className="text-sm text-muted-foreground mb-4">
-                    Valor cobrado por mês
+                  <div className="mb-4">
+                    <div className="text-4xl font-bold">
+                      <GradientText>
+                        R$ {PLAN_FEATURES[plan].pricing[selectedPeriod]}/mês
+                      </GradientText>
+                    </div>
+                    {selectedPeriod !== "monthly" && (
+                      <div className="text-sm text-green-500 font-semibold mt-2">
+                        {selectedPeriod === "semiannual" ? "7% de desconto" : "15% de desconto"}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -143,12 +144,12 @@ export default function Pricing() {
                 </ul>
 
                 <Button
-                  onClick={() => handleSelectPlan(plan)}
-                  disabled={creatingCheckout || isCurrentPlan}
+                  onClick={() => navigate(`/signup?plan=${plan}`)}
+                  disabled={isCurrentPlan}
                   variant={isPopular ? "glow" : "outline"}
                   className="w-full"
                 >
-                  {isCurrentPlan ? "Plano Atual" : "Selecionar Plano"}
+                  {isCurrentPlan ? "Plano Atual" : "Selecionar"}
                 </Button>
               </GlassCard>
             );

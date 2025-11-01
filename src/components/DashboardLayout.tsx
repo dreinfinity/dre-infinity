@@ -165,34 +165,45 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       </header>
 
+      {/* Sidebar Toggle Button - External Floating */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className={`fixed top-20 z-50 p-2 bg-gradient-to-br from-green-500 to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 ${
+          sidebarOpen ? "left-[13.5rem]" : "left-4"
+        } lg:flex hidden`}
+      >
+        <Menu size={16} className={`text-white transition-transform duration-300 ${sidebarOpen ? "rotate-90" : ""}`} />
+      </button>
+
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-16 bottom-0 w-64 glass border-r border-border/50 z-40 transition-transform duration-300 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
+        className={`fixed left-0 top-16 bottom-0 glass border-r border-border/50 z-40 transition-all duration-300 ${
+          sidebarOpen ? "w-56" : "w-0 lg:w-14"
+        } overflow-hidden`}
       >
-        <nav className="p-4 space-y-2">
+        <nav className="p-3 space-y-1.5">
           {menuItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-xs ${
                 isActive(item.path)
                   ? "bg-primary/10 text-primary font-medium"
                   : "hover:bg-muted text-muted-foreground hover:text-foreground"
               }`}
+              title={!sidebarOpen ? item.label : undefined}
             >
-              <item.icon size={20} />
-              <span>{item.label}</span>
+              <item.icon size={16} className="shrink-0" />
+              <span className={`${sidebarOpen ? "block" : "lg:hidden"}`}>{item.label}</span>
             </Link>
           ))}
         </nav>
       </aside>
 
       {/* Main Content */}
-      <main className="lg:ml-64 pt-16">
-        <div className="container mx-auto p-6">{children}</div>
+      <main className={`pt-16 transition-all duration-300 ${sidebarOpen ? "lg:ml-56" : "lg:ml-14"}`}>
+        <div className="container mx-auto p-4 sm:p-6">{children}</div>
       </main>
 
       {/* Mobile Overlay */}

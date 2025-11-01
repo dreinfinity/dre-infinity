@@ -58,10 +58,10 @@ serve(async (req) => {
     let intervalCount = 1;
     
     if (period === 'semiannual') {
-      discount = 0.05;
+      discount = 0.07;
       intervalCount = 6;
     } else if (period === 'annual') {
-      discount = 0.10;
+      discount = 0.15;
       intervalCount = 12;
     }
 

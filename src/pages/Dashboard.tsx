@@ -44,10 +44,12 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { TrendingUp, TrendingDown, DollarSign, Users, Target, Activity, ArrowUpRight, ArrowDownRight, Download, FileSpreadsheet, FileText } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Users, Target, Activity, ArrowUpRight, ArrowDownRight, Download, FileSpreadsheet, FileText, PlusCircle } from "lucide-react";
 import { RevenueCompositionFunnel } from "@/components/dashboard/RevenueCompositionFunnel";
 import { KPIEvolutionCharts } from "@/components/dashboard/KPIEvolutionCharts";
 import { GoalProgressIndicator } from "@/components/dashboard/GoalProgressIndicator";
+import { TransactionModal } from "@/components/dashboard/TransactionModal";
+import { useTransactions } from "@/hooks/useTransactions";
 
 export default function Dashboard() {
   const { company, companies, loading: companyLoading } = useCompany();
@@ -58,6 +60,20 @@ export default function Dashboard() {
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [comparisonType, setComparisonType] = useState<"none" | "previous-month" | "same-period-last-year">("none");
+  const [transactionModalOpen, setTransactionModalOpen] = useState(false);
+  const [transactionType, setTransactionType] = useState<"administrative" | "operational">("administrative");
+
+  const { createTransaction } = useTransactions();
+
+  const handleCreateTransaction = async (data: any) => {
+    await createTransaction(data);
+    toast({
+      title: "✅ Lançamento Criado",
+      description: "A transação foi registrada com sucesso.",
+    });
+    // Refresh metrics
+    await refreshMetricsCache();
+  };
 
   const { data: dreData, isLoading: dreLoading } = useDREReport(selectedMonth, selectedYear);
   const { metricsCache, loading: metricsLoading, refreshMetricsCache } = useMetricsCache(selectedMonth, selectedYear);
@@ -262,9 +278,34 @@ export default function Dashboard() {
         <div className="flex gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
+              <Button variant="glow" size="sm" className="flex items-center gap-2">
+                <PlusCircle className="h-4 w-4" />
+                <span className="hidden sm:inline">Lançamento</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Tipo de Lançamento</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => {
+                setTransactionType("administrative");
+                setTransactionModalOpen(true);
+              }}>
+                Administrativo
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                setTransactionType("operational");
+                setTransactionModalOpen(true);
+              }}>
+                Operacional
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="flex items-center gap-2">
                 <Download className="h-4 w-4" />
-                Exportar
+                <span className="hidden sm:inline">Exportar</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -288,7 +329,7 @@ export default function Dashboard() {
             disabled={!company || metricsLoading}
             className="flex items-center gap-2"
           >
-            🔄 Atualizar
+            🔄 <span className="hidden sm:inline">Atualizar</span>
           </Button>
         </div>
       </div>
@@ -805,6 +846,13 @@ export default function Dashboard() {
           </>
         )}
       </div>
+
+      <TransactionModal
+        open={transactionModalOpen}
+        onOpenChange={setTransactionModalOpen}
+        transactionType={transactionType}
+        onSubmit={handleCreateTransaction}
+      />
     </div>
   );
 }
