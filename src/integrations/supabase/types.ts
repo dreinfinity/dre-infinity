@@ -222,6 +222,7 @@ export type Database = {
           display_order: number | null
           id: string
           is_active: boolean | null
+          markup_type: string | null
           name: string
           parent_id: string | null
           updated_at: string
@@ -236,6 +237,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean | null
+          markup_type?: string | null
           name: string
           parent_id?: string | null
           updated_at?: string
@@ -250,6 +252,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean | null
+          markup_type?: string | null
           name?: string
           parent_id?: string | null
           updated_at?: string
@@ -624,6 +627,14 @@ export type Database = {
         Returns: boolean
       }
       get_dre_report: {
+        Args: {
+          company_id_param: string
+          month_param: number
+          year_param: number
+        }
+        Returns: Json
+      }
+      get_markup_data: {
         Args: {
           company_id_param: string
           month_param: number

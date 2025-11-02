@@ -51,6 +51,7 @@ import { KPIEvolutionCharts } from "@/components/dashboard/KPIEvolutionCharts";
 import { GoalProgressIndicator } from "@/components/dashboard/GoalProgressIndicator";
 import { TransactionModal } from "@/components/dashboard/TransactionModal";
 import { useTransactions } from "@/hooks/useTransactions";
+import { MarkupCalculator } from "@/components/dashboard/MarkupCalculator";
 
 export default function Dashboard() {
   const { company, companies, loading: companyLoading } = useCompany();
@@ -73,7 +74,11 @@ export default function Dashboard() {
       title: "✅ Lançamento Criado",
       description: "A transação foi registrada com sucesso.",
     });
-    // Refresh metrics
+    // Invalidar todas as queries para atualizar o dashboard
+    await queryClient.invalidateQueries({ queryKey: ['dre-report'] });
+    await queryClient.invalidateQueries({ queryKey: ['metricsCache'] });
+    await queryClient.invalidateQueries({ queryKey: ['historical-dre'] });
+    await queryClient.invalidateQueries({ queryKey: ['markup-data'] });
     await refreshMetricsCache();
   };
 
@@ -854,6 +859,9 @@ export default function Dashboard() {
           </>
         )}
       </div>
+
+      {/* Cálculo de Markup */}
+      <MarkupCalculator month={selectedMonth} year={selectedYear} />
 
       <TransactionModal
         open={transactionModalOpen}

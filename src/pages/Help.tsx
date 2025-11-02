@@ -225,6 +225,69 @@ export default function Help() {
               </p>
             </AccordionContent>
           </AccordionItem>
+
+          <AccordionItem value="item-8">
+            <AccordionTrigger>
+              O que é Markup e como calcular o Preço de Venda?
+            </AccordionTrigger>
+            <AccordionContent>
+              <p className="mb-2">
+                <strong>Markup</strong> é um índice multiplicador usado para
+                calcular o preço de venda de um produto/serviço, garantindo que
+                todos os custos e a margem de lucro desejada sejam cobertos.
+              </p>
+              <p className="mb-2">
+                <strong>Componentes do Markup:</strong>
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-sm mb-2">
+                <li>
+                  <strong>CD (Custo Direto):</strong> Soma dos custos diretos
+                  vinculados ao produto (matéria-prima, mão de obra direta, etc.)
+                </li>
+                <li>
+                  <strong>DV% (Despesas Variáveis %):</strong> Percentual das
+                  despesas variáveis em relação à receita líquida
+                </li>
+                <li>
+                  <strong>DF% (Despesas Fixas %):</strong> Percentual das despesas
+                  fixas em relação à receita líquida
+                </li>
+                <li>
+                  <strong>ML% (Margem de Lucro %):</strong> Percentual de lucro
+                  desejado sobre a venda
+                </li>
+              </ul>
+              <p className="mb-2">
+                <strong>Fórmulas:</strong>
+              </p>
+              <div className="bg-muted/50 p-3 rounded-lg space-y-2 text-sm mb-2">
+                <p>
+                  <strong>Índice Markup (Divisor):</strong>
+                  <br />
+                  Markup = 100 / [100 - (DV% + DF% + ML%)]
+                </p>
+                <p>
+                  <strong>Preço de Venda:</strong>
+                  <br />
+                  Preço = Custo Direto × Markup
+                </p>
+              </div>
+              <p className="text-sm text-muted-foreground mb-2">
+                <strong>Exemplo:</strong> Se seu Custo Direto é R$ 100, DV% = 10%,
+                DF% = 20% e você deseja ML% = 30%:
+                <br />
+                Markup = 100 / [100 - (10 + 20 + 30)] = 100 / 40 = 2,50
+                <br />
+                Preço de Venda = R$ 100 × 2,50 = R$ 250,00
+              </p>
+              <p className="mt-2 text-sm">
+                <strong>Como configurar:</strong> Acesse o Dashboard, role até a
+                seção "Cálculo de Markup" e clique em "Configurar" para vincular
+                suas categorias de custos/despesas aos tipos de Markup (CD, DV ou
+                DF).
+              </p>
+            </AccordionContent>
+          </AccordionItem>
         </Accordion>
       </GlassCard>
 
