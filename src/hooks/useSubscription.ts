@@ -5,7 +5,6 @@ import { useToast } from "@/hooks/use-toast";
 
 export type SubscriptionPlan = "functional" | "growth" | "infinity";
 export type SubscriptionStatus = "trial" | "active" | "cancelled" | "expired";
-export type BillingPeriod = "monthly" | "semiannual" | "annual";
 
 export interface SubscriptionDetails {
   plan: SubscriptionPlan;
@@ -20,8 +19,6 @@ export interface SubscriptionDetails {
 
 export interface PlanPricing {
   monthly: number;
-  semiannual: number;
-  annual: number;
 }
 
 export const PLAN_FEATURES = {
@@ -29,8 +26,6 @@ export const PLAN_FEATURES = {
     name: "Functional",
     pricing: {
       monthly: 97,
-      semiannual: 90, // 7% desconto, arredondado
-      annual: 82, // 15% desconto, arredondado
     },
     features: [
       "Dashboard completo com KPIs essenciais",
@@ -50,8 +45,6 @@ export const PLAN_FEATURES = {
     name: "Growth",
     pricing: {
       monthly: 197,
-      semiannual: 183, // 7% desconto, arredondado
-      annual: 167, // 15% desconto, arredondado
     },
     features: [
       "Tudo do Functional +",
@@ -73,8 +66,6 @@ export const PLAN_FEATURES = {
     name: "Infinity",
     pricing: {
       monthly: 397,
-      semiannual: 369, // 7% desconto, arredondado
-      annual: 337, // 15% desconto, arredondado
     },
     features: [
       "Tudo do Growth +",
@@ -106,14 +97,41 @@ export function useSubscription() {
     queryFn: async () => {
       if (!user?.id) return null;
 
-      const { data, error } = await supabase.rpc("get_subscription_details", {
-        p_user_id: user.id,
-      });
+      const { data, error } = await supabase.functions.invoke('check-subscription');
 
-      if (error) throw error;
-      return data as unknown as SubscriptionDetails;
+      if (error) {
+        console.error('Error fetching subscription:', error);
+        return null;
+      }
+
+      if (!data || !data.plan) {
+        return {
+          plan: 'functional',
+          status: 'trial',
+          trialEndsAt: null,
+          currentPeriodStart: new Date().toISOString(),
+          currentPeriodEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          isActive: false,
+          isTrial: true,
+          daysUntilExpiry: 0,
+        } as SubscriptionDetails;
+      }
+
+      return {
+        plan: data.plan,
+        status: data.subscribed ? 'active' : (data.isTrial ? 'trial' : 'expired'),
+        trialEndsAt: data.subscription_end,
+        currentPeriodStart: new Date().toISOString(),
+        currentPeriodEnd: data.subscription_end || new Date().toISOString(),
+        isActive: data.subscribed || data.isTrial,
+        isTrial: data.isTrial || false,
+        daysUntilExpiry: data.subscription_end
+          ? Math.max(0, Math.floor((new Date(data.subscription_end).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+          : 0,
+      } as SubscriptionDetails;
     },
     enabled: !!user?.id,
+    refetchInterval: 60000, // Refetch a cada 1 minuto
   });
 
   const checkFeatureAccess = async (feature: string): Promise<boolean> => {
@@ -133,13 +151,12 @@ export function useSubscription() {
   };
 
   const createCheckoutSession = useMutation({
-    mutationFn: async ({ plan, period }: { plan: SubscriptionPlan; period: BillingPeriod }) => {
+    mutationFn: async ({ plan }: { plan: SubscriptionPlan }) => {
       if (!user?.id) throw new Error("Usuário não autenticado");
 
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {
           plan,
-          period,
           userId: user.id,
         },
       });
@@ -148,7 +165,7 @@ export function useSubscription() {
       if (!data?.url) throw new Error("URL de checkout não gerada");
 
       // Redirecionar para checkout do Stripe
-      window.location.href = data.url;
+      window.open(data.url, '_blank');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });

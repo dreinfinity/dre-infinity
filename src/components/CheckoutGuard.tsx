@@ -13,8 +13,8 @@ export function CheckoutGuard({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isLoading && subscription) {
-      // Se o trial expirou e não está ativo, redirecionar para pricing
-      if (subscription.status === 'expired' && !subscription.isActive) {
+      // Se não está ativo e não está em trial, redirecionar para pricing
+      if (!subscription.isActive && !subscription.isTrial) {
         if (location.pathname !== '/pricing') {
           navigate('/pricing');
         }
@@ -30,8 +30,8 @@ export function CheckoutGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Se trial expirou, mostrar tela de checkout
-  if (subscription?.status === 'expired' && !subscription.isActive) {
+  // Se não está ativo e não está em trial, mostrar tela de checkout
+  if (!subscription?.isActive && !subscription?.isTrial) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <GlassCard className="max-w-2xl w-full p-8 sm:p-12 text-center space-y-6">

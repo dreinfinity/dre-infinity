@@ -4,21 +4,13 @@ import { ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
 import { GradientText } from "@/components/GradientText";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { useSubscription, PLAN_FEATURES, BillingPeriod, SubscriptionPlan } from "@/hooks/useSubscription";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useSubscription, PLAN_FEATURES, SubscriptionPlan } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Pricing() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { createCheckoutSession, creatingCheckout, currentPlan, daysUntilExpiry, isTrial } = useSubscription();
-  const [selectedPeriods, setSelectedPeriods] = useState<Record<string, BillingPeriod>>({
-    functional: "monthly",
-    growth: "monthly",
-    infinity: "monthly",
-  });
+  const { currentPlan, daysUntilExpiry, isTrial } = useSubscription();
 
   const handleSelectPlan = (plan: SubscriptionPlan) => {
     if (user) {
@@ -28,16 +20,6 @@ export default function Pricing() {
       // Se não logado, vai para cadastro
       navigate(`/signup?plan=${plan}`);
     }
-  };
-
-  const getDiscountLabel = (period: BillingPeriod) => {
-    if (period === "semiannual") return "7% OFF";
-    if (period === "annual") return "15% OFF";
-    return null;
-  };
-
-  const setPeriodForPlan = (plan: string, period: BillingPeriod) => {
-    setSelectedPeriods(prev => ({ ...prev, [plan]: period }));
   };
 
   return (
@@ -72,7 +54,6 @@ export default function Pricing() {
           {(Object.keys(PLAN_FEATURES) as SubscriptionPlan[]).map((plan) => {
             const isCurrentPlan = currentPlan === plan;
             const isPopular = plan === "growth";
-            const selectedPeriod = selectedPeriods[plan];
 
             return (
               <GlassCard
@@ -93,51 +74,19 @@ export default function Pricing() {
                 )}
 
                 <div className="text-center mb-6">
-                  <h3 className="text-3xl font-bold mb-6 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
+                  <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent">
                     {PLAN_FEATURES[plan].name}
                   </h3>
-                  
-                  <div className="flex gap-2 mb-6 justify-center">
-                    <Button
-                      type="button"
-                      variant={selectedPeriod === "monthly" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setPeriodForPlan(plan, "monthly")}
-                      className="flex-1"
-                    >
-                      Mensal
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={selectedPeriod === "semiannual" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setPeriodForPlan(plan, "semiannual")}
-                      className="flex-1"
-                    >
-                      Semestral
-                    </Button>
-                    <Button
-                      type="button"
-                      variant={selectedPeriod === "annual" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setPeriodForPlan(plan, "annual")}
-                      className="flex-1"
-                    >
-                      Anual
-                    </Button>
-                  </div>
-
+                   
                   <div className="mb-4">
                     <div className="text-4xl font-bold">
                       <GradientText>
-                        R$ {PLAN_FEATURES[plan].pricing[selectedPeriod]}/mês
+                        R$ {PLAN_FEATURES[plan].pricing.monthly}/mês
                       </GradientText>
                     </div>
-                    {selectedPeriod !== "monthly" && (
-                      <div className="text-sm text-green-500 font-semibold mt-2">
-                        {selectedPeriod === "semiannual" ? "7% de desconto" : "15% de desconto"}
-                      </div>
-                    )}
+                    <div className="text-sm text-muted-foreground mt-2">
+                      7 dias grátis
+                    </div>
                   </div>
                 </div>
 

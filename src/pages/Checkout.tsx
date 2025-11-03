@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSubscription, PLAN_FEATURES, SubscriptionPlan, BillingPeriod } from "@/hooks/useSubscription";
+import { useSubscription, PLAN_FEATURES, SubscriptionPlan } from "@/hooks/useSubscription";
 import { GlassCard } from "@/components/GlassCard";
 import { GradientText } from "@/components/GradientText";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,6 @@ const Checkout = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { createCheckoutSession, creatingCheckout } = useSubscription();
-  const [selectedPeriod, setSelectedPeriod] = useState<BillingPeriod>("monthly");
 
   const plan = (searchParams.get("plan") || "functional") as SubscriptionPlan;
   const planInfo = PLAN_FEATURES[plan];
@@ -36,7 +35,7 @@ const Checkout = () => {
       return;
     }
 
-    createCheckoutSession({ plan, period: selectedPeriod });
+    createCheckoutSession({ plan });
   };
 
   if (!user) {
@@ -47,8 +46,7 @@ const Checkout = () => {
     );
   }
 
-  const price = planInfo.pricing[selectedPeriod];
-  const savings = selectedPeriod === "semiannual" ? 7 : selectedPeriod === "annual" ? 15 : 0;
+  const price = planInfo.pricing.monthly;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-12 px-4">
@@ -58,7 +56,7 @@ const Checkout = () => {
             Finalizar Assinatura
           </GradientText>
           <p className="text-muted-foreground">
-            Complete sua assinatura e comece a usar todas as funcionalidades
+            7 dias grátis, depois R$ {price}/mês. Cancele quando quiser.
           </p>
         </div>
 
@@ -81,62 +79,28 @@ const Checkout = () => {
 
           {/* Pagamento */}
           <GlassCard className="p-6">
-            <h3 className="text-xl font-semibold mb-6">Período de Cobrança</h3>
-
-            {/* Seletor de Período */}
-            <div className="flex gap-2 mb-6">
-              <Button
-                variant={selectedPeriod === "monthly" ? "default" : "outline"}
-                className="flex-1"
-                onClick={() => setSelectedPeriod("monthly")}
-              >
-                Mensal
-              </Button>
-              <Button
-                variant={selectedPeriod === "semiannual" ? "default" : "outline"}
-                className="flex-1"
-                onClick={() => setSelectedPeriod("semiannual")}
-              >
-                Semestral
-                {selectedPeriod === "semiannual" && (
-                  <span className="ml-1 text-xs">-7%</span>
-                )}
-              </Button>
-              <Button
-                variant={selectedPeriod === "annual" ? "default" : "outline"}
-                className="flex-1"
-                onClick={() => setSelectedPeriod("annual")}
-              >
-                Anual
-                {selectedPeriod === "annual" && (
-                  <span className="ml-1 text-xs">-15%</span>
-                )}
-              </Button>
-            </div>
+            <h3 className="text-xl font-semibold mb-6">Detalhes da Assinatura</h3>
 
             {/* Resumo do Preço */}
-            <div className="bg-background/50 rounded-lg p-4 mb-6 space-y-2">
-              <div className="flex justify-between text-sm">
+            <div className="bg-background/50 rounded-lg p-4 mb-6 space-y-3">
+              <div className="flex justify-between">
                 <span className="text-muted-foreground">Plano {planInfo.name}</span>
                 <span className="font-medium">R$ {price}/mês</span>
               </div>
               
-              {savings > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Economia</span>
-                  <span className="text-green-500 font-medium">{savings}% de desconto</span>
-                </div>
-              )}
+              <div className="flex justify-between text-sm">
+                <span className="text-green-500 font-medium">Trial gratuito</span>
+                <span className="text-green-500 font-medium">7 dias</span>
+              </div>
 
-              <div className="border-t border-border pt-2 mt-2">
+              <div className="border-t border-border pt-3 mt-3">
                 <div className="flex justify-between">
-                  <span className="font-semibold">Total</span>
-                  <span className="font-bold text-lg">
-                    R$ {price * (selectedPeriod === "monthly" ? 1 : selectedPeriod === "semiannual" ? 6 : 12)}
-                    <span className="text-sm text-muted-foreground">
-                      /{selectedPeriod === "monthly" ? "mês" : selectedPeriod === "semiannual" ? "semestre" : "ano"}
-                    </span>
-                  </span>
+                  <span className="font-semibold">Hoje</span>
+                  <span className="font-bold text-lg text-green-500">Grátis</span>
+                </div>
+                <div className="flex justify-between mt-2 text-sm text-muted-foreground">
+                  <span>Após o trial</span>
+                  <span>R$ {price}/mês</span>
                 </div>
               </div>
             </div>
@@ -145,7 +109,7 @@ const Checkout = () => {
             <Button
               onClick={handleCheckout}
               disabled={creatingCheckout}
-              className="w-full"
+              className="w-full bg-gradient-primary hover:opacity-90"
               size="lg"
             >
               {creatingCheckout ? (
@@ -154,12 +118,12 @@ const Checkout = () => {
                   Processando...
                 </>
               ) : (
-                "Ir para Pagamento"
+                "Começar Teste Grátis"
               )}
             </Button>
 
             <p className="text-xs text-muted-foreground text-center mt-4">
-              Você será redirecionado para o checkout seguro do Stripe
+              Você será redirecionado para o checkout seguro do Stripe. Cancele a qualquer momento.
             </p>
           </GlassCard>
         </div>
