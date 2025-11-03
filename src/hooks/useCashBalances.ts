@@ -11,20 +11,23 @@ export interface CashBalances {
   investments: number;
   withdrawals: number;
   availableBalance: number;
+  valoresAplicados: number;
 }
 
-export function useCashBalances() {
+export function useCashBalances(startDate?: string, endDate?: string) {
   const { company } = useCompany();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: balances, isLoading } = useQuery({
-    queryKey: ["cash-balances", company?.id],
+    queryKey: ["cash-balances", company?.id, startDate, endDate],
     queryFn: async () => {
       if (!company?.id) return null;
 
       const { data, error } = await supabase.rpc("calculate_cash_balances", {
         p_company_id: company.id,
+        p_start_date: startDate || null,
+        p_end_date: endDate || null,
       });
 
       if (error) throw error;

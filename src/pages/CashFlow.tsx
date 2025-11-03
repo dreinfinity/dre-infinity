@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useCashBalances } from "@/hooks/useCashBalances";
 import { GlassCard } from "@/components/GlassCard";
 import { GradientText } from "@/components/GradientText";
@@ -5,11 +6,24 @@ import { VaultCard } from "@/components/cash/VaultCard";
 import { TransferDialog } from "@/components/cash/TransferDialog";
 import { TransactionList } from "@/components/cash/TransactionList";
 import { TagManager } from "@/components/cash/TagManager";
+import { DateFilter } from "@/components/cash/DateFilter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Wallet, Shield, TrendingUp, DollarSign, ArrowDownToLine, Loader2 } from "lucide-react";
+import { Wallet, Shield, TrendingUp, DollarSign, ArrowDownToLine, Loader2, PiggyBank } from "lucide-react";
+import { format } from "date-fns";
 
 export default function CashFlow() {
-  const { balances, isLoading } = useCashBalances();
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
+  
+  const startDateStr = startDate ? format(startDate, "yyyy-MM-dd") : undefined;
+  const endDateStr = endDate ? format(endDate, "yyyy-MM-dd") : undefined;
+  
+  const { balances, isLoading } = useCashBalances(startDateStr, endDateStr);
+
+  const handleDateChange = (newStartDate?: Date, newEndDate?: Date) => {
+    setStartDate(newStartDate);
+    setEndDate(newEndDate);
+  };
 
   const formatCurrency = (value: number | undefined) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -36,32 +50,40 @@ export default function CashFlow() {
   return (
     <div className="container mx-auto p-6 space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <GradientText className="text-4xl font-bold mb-2">
-            Gestão de Caixa
-          </GradientText>
-          <p className="text-muted-foreground">
-            Gerencie seus cofres e organize seus recursos financeiros
-          </p>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <GradientText className="text-4xl font-bold mb-2">
+              Gestão de Caixa
+            </GradientText>
+            <p className="text-muted-foreground">
+              Gerencie seus cofres e organize seus recursos financeiros
+            </p>
+          </div>
+          <TransferDialog />
         </div>
-        <TransferDialog />
+        
+        <DateFilter
+          startDate={startDate}
+          endDate={endDate}
+          onDateChange={handleDateChange}
+        />
       </div>
 
       {/* Dashboard de Saldos */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <GlassCard className="p-6">
           <div className="flex items-center gap-3 mb-2">
-            <Wallet className="w-6 h-6 text-blue-500" />
-            <h3 className="font-semibold text-sm text-muted-foreground">Saldo Total</h3>
+            <DollarSign className="w-6 h-6 text-green-500" />
+            <h3 className="font-semibold text-sm text-muted-foreground">Saldo Disponível</h3>
           </div>
-          <p className="text-3xl font-bold">{formatCurrency(balances?.totalBalance)}</p>
-          <p className="text-xs text-muted-foreground mt-1">Todas as receitas</p>
+          <p className="text-3xl font-bold">{formatCurrency(balances?.availableBalance)}</p>
+          <p className="text-xs text-muted-foreground mt-1">Igual ao saldo líquido</p>
         </GlassCard>
 
         <GlassCard className="p-6">
           <div className="flex items-center gap-3 mb-2">
-            <TrendingUp className="w-6 h-6 text-green-500" />
+            <TrendingUp className="w-6 h-6 text-blue-500" />
             <h3 className="font-semibold text-sm text-muted-foreground">Saldo Líquido</h3>
           </div>
           <p className="text-3xl font-bold">{formatCurrency(balances?.netBalance)}</p>
@@ -70,11 +92,11 @@ export default function CashFlow() {
 
         <GlassCard className="p-6">
           <div className="flex items-center gap-3 mb-2">
-            <DollarSign className="w-6 h-6 text-yellow-500" />
-            <h3 className="font-semibold text-sm text-muted-foreground">Saldo Disponível</h3>
+            <PiggyBank className="w-6 h-6 text-purple-500" />
+            <h3 className="font-semibold text-sm text-muted-foreground">Valores Aplicados</h3>
           </div>
-          <p className="text-3xl font-bold">{formatCurrency(balances?.availableBalance)}</p>
-          <p className="text-xs text-muted-foreground mt-1">Livre para transferir</p>
+          <p className="text-3xl font-bold">{formatCurrency(balances?.valoresAplicados)}</p>
+          <p className="text-xs text-muted-foreground mt-1">Reserva + Capital + Investimentos</p>
         </GlassCard>
       </div>
 
