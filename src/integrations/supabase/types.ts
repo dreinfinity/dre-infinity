@@ -621,7 +621,16 @@ export type Database = {
         Args: { p_company_id: string; p_month: number; p_year: number }
         Returns: undefined
       }
-      calculate_cash_balances: { Args: { p_company_id: string }; Returns: Json }
+      calculate_cash_balances:
+        | { Args: { p_company_id: string }; Returns: Json }
+        | {
+            Args: {
+              p_company_id: string
+              p_end_date?: string
+              p_start_date?: string
+            }
+            Returns: Json
+          }
       check_feature_access: {
         Args: { p_feature: string; p_user_id: string }
         Returns: boolean
