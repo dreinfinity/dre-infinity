@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSubscription, PLAN_FEATURES, SubscriptionPlan } from "@/hooks/useSubscription";
+import { useSubscription, PLAN_FEATURES, SubscriptionPlan, BillingPeriod } from "@/hooks/useSubscription";
 import { GlassCard } from "@/components/GlassCard";
 import { GradientText } from "@/components/GradientText";
 import { Button } from "@/components/ui/button";
@@ -16,13 +16,14 @@ const Checkout = () => {
   const { createCheckoutSession, creatingCheckout } = useSubscription();
 
   const plan = (searchParams.get("plan") || "functional") as SubscriptionPlan;
+  const period = (searchParams.get("period") || "monthly") as BillingPeriod;
   const planInfo = PLAN_FEATURES[plan];
 
   useEffect(() => {
     if (!user) {
-      navigate(`/signup?plan=${plan}`);
+      navigate(`/signup?plan=${plan}&period=${period}`);
     }
-  }, [user, navigate, plan]);
+  }, [user, navigate, plan, period]);
 
   const handleCheckout = () => {
     if (!user) {
@@ -31,11 +32,39 @@ const Checkout = () => {
         description: "Você precisa estar logado para continuar.",
         variant: "destructive",
       });
-      navigate(`/signup?plan=${plan}`);
+      navigate(`/signup?plan=${plan}&period=${period}`);
       return;
     }
 
-    createCheckoutSession({ plan });
+    createCheckoutSession({ plan, period });
+  };
+
+  const getPriceDisplay = () => {
+    const pricing = planInfo.pricing;
+    
+    switch (period) {
+      case "semiannual":
+        return {
+          total: pricing.semiannual,
+          monthly: pricing.semiannualMonthly,
+          discount: "8% de desconto",
+          period: "semestral",
+        };
+      case "annual":
+        return {
+          total: pricing.annual,
+          monthly: pricing.annualMonthly,
+          discount: "18% de desconto",
+          period: "anual",
+        };
+      default:
+        return {
+          total: pricing.monthly,
+          monthly: pricing.monthly,
+          discount: null,
+          period: "mensal",
+        };
+    }
   };
 
   if (!user) {
@@ -46,7 +75,7 @@ const Checkout = () => {
     );
   }
 
-  const price = planInfo.pricing.monthly;
+  const priceDisplay = getPriceDisplay();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-12 px-4">
@@ -56,7 +85,7 @@ const Checkout = () => {
             Finalizar Assinatura
           </GradientText>
           <p className="text-muted-foreground">
-            7 dias grátis, depois R$ {price}/mês. Cancele quando quiser.
+            7 dias grátis, depois R$ {priceDisplay.monthly}/mês. Cancele quando quiser.
           </p>
         </div>
 
@@ -84,10 +113,19 @@ const Checkout = () => {
             {/* Resumo do Preço */}
             <div className="bg-background/50 rounded-lg p-4 mb-6 space-y-3">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Plano {planInfo.name}</span>
-                <span className="font-medium">R$ {price}/mês</span>
+                <span className="text-muted-foreground">
+                  Plano {planInfo.name} ({priceDisplay.period})
+                </span>
+                <span className="font-medium">R$ {priceDisplay.monthly}/mês</span>
               </div>
               
+              {priceDisplay.discount && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-500 font-medium">{priceDisplay.discount}</span>
+                  <span className="text-muted-foreground">Total: R$ {priceDisplay.total}</span>
+                </div>
+              )}
+
               <div className="flex justify-between text-sm">
                 <span className="text-green-500 font-medium">Trial gratuito</span>
                 <span className="text-green-500 font-medium">7 dias</span>
@@ -100,7 +138,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between mt-2 text-sm text-muted-foreground">
                   <span>Após o trial</span>
-                  <span>R$ {price}/mês</span>
+                  <span>R$ {priceDisplay.monthly}/mês</span>
                 </div>
               </div>
             </div>
@@ -118,7 +156,7 @@ const Checkout = () => {
                   Processando...
                 </>
               ) : (
-                "Começar Teste Grátis"
+                "Ir para Checkout"
               )}
             </Button>
 

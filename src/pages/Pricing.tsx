@@ -4,21 +4,55 @@ import { ArrowLeft, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
 import { GradientText } from "@/components/GradientText";
-import { useSubscription, PLAN_FEATURES, SubscriptionPlan } from "@/hooks/useSubscription";
+import { useSubscription, PLAN_FEATURES, SubscriptionPlan, BillingPeriod } from "@/hooks/useSubscription";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Pricing() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { currentPlan, daysUntilExpiry, isTrial } = useSubscription();
+  const [selectedPeriod, setSelectedPeriod] = useState<BillingPeriod>("monthly");
 
   const handleSelectPlan = (plan: SubscriptionPlan) => {
     if (user) {
       // Se logado, vai para checkout
-      navigate(`/checkout?plan=${plan}`);
+      navigate(`/checkout?plan=${plan}&period=${selectedPeriod}`);
     } else {
       // Se não logado, vai para cadastro
-      navigate(`/signup?plan=${plan}`);
+      navigate(`/signup?plan=${plan}&period=${selectedPeriod}`);
+    }
+  };
+
+  const handleBack = () => {
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/');
+    }
+  };
+
+  const getPriceDisplay = (plan: SubscriptionPlan) => {
+    const pricing = PLAN_FEATURES[plan].pricing;
+    
+    switch (selectedPeriod) {
+      case "semiannual":
+        return {
+          total: pricing.semiannual,
+          monthly: pricing.semiannualMonthly,
+          discount: "8% de desconto",
+        };
+      case "annual":
+        return {
+          total: pricing.annual,
+          monthly: pricing.annualMonthly,
+          discount: "18% de desconto",
+        };
+      default:
+        return {
+          total: pricing.monthly,
+          monthly: pricing.monthly,
+          discount: null,
+        };
     }
   };
 
@@ -28,7 +62,7 @@ export default function Pricing() {
         <div className="flex items-center justify-between mb-8">
           <Button
             variant="ghost"
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
             className="gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -36,7 +70,7 @@ export default function Pricing() {
           </Button>
           {isTrial && (
             <div className="text-sm text-muted-foreground">
-              {daysUntilExpiry} dias restantes no trial
+              Teste Grátis - Faltam {daysUntilExpiry} dias
             </div>
           )}
         </div>
@@ -46,14 +80,44 @@ export default function Pricing() {
             <GradientText>Escolha seu Plano</GradientText>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Comece com 7 dias grátis. Cancele quando quiser.
+            Comece com 7 dias grátis. Sem necessidade de cartão. Cancele quando quiser.
           </p>
+        </div>
+
+        {/* Period Selector */}
+        <div className="flex justify-center mb-12">
+          <div className="inline-flex bg-muted/30 rounded-lg p-1 gap-1">
+            <Button
+              variant={selectedPeriod === "monthly" ? "default" : "ghost"}
+              onClick={() => setSelectedPeriod("monthly")}
+              className="rounded-md"
+            >
+              Mensal
+            </Button>
+            <Button
+              variant={selectedPeriod === "semiannual" ? "default" : "ghost"}
+              onClick={() => setSelectedPeriod("semiannual")}
+              className="rounded-md"
+            >
+              Semestral
+              <span className="ml-2 text-xs text-green-500">-8%</span>
+            </Button>
+            <Button
+              variant={selectedPeriod === "annual" ? "default" : "ghost"}
+              onClick={() => setSelectedPeriod("annual")}
+              className="rounded-md"
+            >
+              Anual
+              <span className="ml-2 text-xs text-green-500">-18%</span>
+            </Button>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           {(Object.keys(PLAN_FEATURES) as SubscriptionPlan[]).map((plan) => {
             const isCurrentPlan = currentPlan === plan;
             const isPopular = plan === "growth";
+            const priceDisplay = getPriceDisplay(plan);
 
             return (
               <GlassCard
@@ -81,11 +145,21 @@ export default function Pricing() {
                   <div className="mb-4">
                     <div className="text-4xl font-bold">
                       <GradientText>
-                        R$ {PLAN_FEATURES[plan].pricing.monthly}/mês
+                        R$ {priceDisplay.monthly}/mês
                       </GradientText>
                     </div>
+                    {priceDisplay.discount && (
+                      <div className="text-sm text-green-500 font-medium mt-1">
+                        {priceDisplay.discount}
+                      </div>
+                    )}
+                    {selectedPeriod !== "monthly" && (
+                      <div className="text-xs text-muted-foreground mt-1">
+                        Total: R$ {priceDisplay.total}
+                      </div>
+                    )}
                     <div className="text-sm text-muted-foreground mt-2">
-                      7 dias grátis
+                      7 dias grátis - Sem cartão
                     </div>
                   </div>
                 </div>
@@ -105,7 +179,7 @@ export default function Pricing() {
                   variant={isPopular ? "glow" : "outline"}
                   className="w-full"
                 >
-                  {isCurrentPlan ? "Plano Atual" : "Selecionar"}
+                  {isCurrentPlan ? "Plano Atual" : "Começar Teste Grátis"}
                 </Button>
               </GlassCard>
             );
@@ -120,10 +194,10 @@ export default function Pricing() {
           
           <div className="space-y-4">
             <GlassCard className="p-6">
-              <h3 className="font-semibold mb-2">Como funciona o trial de 7 dias?</h3>
+              <h3 className="font-semibold mb-2">Como funciona o teste grátis de 7 dias?</h3>
               <p className="text-sm text-muted-foreground">
                 Você tem acesso completo ao plano escolhido por 7 dias gratuitamente, sem precisar cadastrar cartão. 
-                Após o período de trial, você escolhe a forma de pagamento para continuar usando a plataforma.
+                Após o período de teste, você pode escolher continuar com o plano pagando via cartão de crédito.
               </p>
             </GlassCard>
 
@@ -138,7 +212,7 @@ export default function Pricing() {
             <GlassCard className="p-6">
               <h3 className="font-semibold mb-2">Como funciona a mudança de plano?</h3>
               <p className="text-sm text-muted-foreground">
-                Você pode fazer upgrade do seu plano a qualquer momento pagando a diferença proporcional do valor sem desconto. 
+                Você pode fazer upgrade do seu plano a qualquer momento pagando a diferença proporcional. 
                 Também pode agendar a mudança para a próxima renovação automática.
               </p>
             </GlassCard>

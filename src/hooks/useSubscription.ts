@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export type SubscriptionPlan = "functional" | "growth" | "infinity";
 export type SubscriptionStatus = "trial" | "active" | "cancelled" | "expired";
+export type BillingPeriod = "monthly" | "semiannual" | "annual";
 
 export interface SubscriptionDetails {
   plan: SubscriptionPlan;
@@ -19,6 +20,10 @@ export interface SubscriptionDetails {
 
 export interface PlanPricing {
   monthly: number;
+  semiannual: number;
+  semiannualMonthly: number;
+  annual: number;
+  annualMonthly: number;
 }
 
 export const PLAN_FEATURES = {
@@ -26,6 +31,10 @@ export const PLAN_FEATURES = {
     name: "Functional",
     pricing: {
       monthly: 97,
+      semiannual: 535,
+      semiannualMonthly: 89,
+      annual: 954,
+      annualMonthly: 79,
     },
     features: [
       "Dashboard completo com KPIs essenciais",
@@ -45,6 +54,10 @@ export const PLAN_FEATURES = {
     name: "Growth",
     pricing: {
       monthly: 197,
+      semiannual: 1087,
+      semiannualMonthly: 181,
+      annual: 1938,
+      annualMonthly: 161,
     },
     features: [
       "Tudo do Functional +",
@@ -66,6 +79,10 @@ export const PLAN_FEATURES = {
     name: "Infinity",
     pricing: {
       monthly: 397,
+      semiannual: 2190,
+      semiannualMonthly: 365,
+      annual: 3906,
+      annualMonthly: 325,
     },
     features: [
       "Tudo do Growth +",
@@ -151,12 +168,13 @@ export function useSubscription() {
   };
 
   const createCheckoutSession = useMutation({
-    mutationFn: async ({ plan }: { plan: SubscriptionPlan }) => {
+    mutationFn: async ({ plan, period }: { plan: SubscriptionPlan; period: BillingPeriod }) => {
       if (!user?.id) throw new Error("Usuário não autenticado");
 
       const { data, error } = await supabase.functions.invoke('create-checkout-session', {
         body: {
           plan,
+          period,
           userId: user.id,
         },
       });

@@ -35,22 +35,34 @@ serve(async (req) => {
     const user = data.user;
     if (!user?.email) throw new Error("Usuário não autenticado");
 
-    const { plan, userId } = await req.json();
+    const { plan, period, userId } = await req.json();
 
-    if (!plan || !userId) {
+    if (!plan || !period || !userId) {
       throw new Error('Parâmetros inválidos');
     }
 
-    // Mapeamento de preços por plano (price IDs do Stripe)
-    const priceIds: Record<string, string> = {
-      functional: 'price_1SPVszCJNzE5MXKSCNhy9L6u',
-      growth: 'price_1SPVf1CJNzE5MXKShs5cCdHG',
-      infinity: 'price_1SPVtvCJNzE5MXKSxRhoAdZG',
+    // Mapeamento de preços por plano e período
+    const priceIds: Record<string, Record<string, string>> = {
+      functional: {
+        monthly: 'price_1SPVszCJNzE5MXKSCNhy9L6u',
+        semiannual: 'price_1SPc00CJNzE5MXKSeNkjVvEE',
+        annual: 'price_1SPc0JCJNzE5MXKSXNf8Hoqp',
+      },
+      growth: {
+        monthly: 'price_1SPVf1CJNzE5MXKShs5cCdHG',
+        semiannual: 'price_1SPc0VCJNzE5MXKS45YJfZY3',
+        annual: 'price_1SPc1GCJNzE5MXKSOSuh3Kqi',
+      },
+      infinity: {
+        monthly: 'price_1SPVtvCJNzE5MXKSxRhoAdZG',
+        semiannual: 'price_1SPc1aCJNzE5MXKS72KhVbII',
+        annual: 'price_1SPc29CJNzE5MXKSekeXap7w',
+      },
     };
 
-    const priceId = priceIds[plan as keyof typeof priceIds];
+    const priceId = priceIds[plan as keyof typeof priceIds]?.[period];
     if (!priceId) {
-      throw new Error('Plano inválido');
+      throw new Error('Plano ou período inválido');
     }
 
     // Buscar ou criar customer
@@ -86,6 +98,7 @@ serve(async (req) => {
       metadata: {
         userId,
         plan,
+        period,
       },
     });
 
