@@ -19,8 +19,34 @@ import {
 import { Link } from "react-router-dom";
 import { PLAN_FEATURES } from "@/hooks/useSubscription";
 import heroBg from "@/assets/hero-bg.jpg";
+import { useAuth } from "@/contexts/AuthContext";
+import { 
+  AlertDialog, 
+  AlertDialogAction, 
+  AlertDialogCancel, 
+  AlertDialogContent, 
+  AlertDialogDescription, 
+  AlertDialogFooter, 
+  AlertDialogHeader, 
+  AlertDialogTitle 
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 export default function Landing() {
+  const { user, signOut } = useAuth();
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+
+  const handleLoginClick = () => {
+    if (user) {
+      setShowLogoutDialog(true);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    setShowLogoutDialog(false);
+  };
+
   const features = [
     {
       icon: BarChart3,
@@ -114,16 +140,27 @@ export default function Landing() {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button variant="hero" size="lg" className="text-lg px-8" asChild>
-                <Link to="/signup">
-                  Experimentar Grátis
+                <Link to={user ? "/dashboard" : "/signup"}>
+                  {user ? "Acessar Dashboard" : "Experimentar Grátis"}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </Button>
-              <Button variant="glass" size="lg" className="text-lg px-8" asChild>
-                <Link to="/login">
-                  Fazer Login
-                </Link>
-              </Button>
+              {user ? (
+                <Button 
+                  variant="glass" 
+                  size="lg" 
+                  className="text-lg px-8"
+                  onClick={handleLoginClick}
+                >
+                  Sair da Conta
+                </Button>
+              ) : (
+                <Button variant="glass" size="lg" className="text-lg px-8" asChild>
+                  <Link to="/login">
+                    Fazer Login
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -180,8 +217,8 @@ export default function Landing() {
                     mais moderna e intuitiva do mercado.
                   </p>
                   <Button variant="hero" size="lg" asChild>
-                    <Link to="/signup">
-                      Começar Agora
+                    <Link to={user ? "/dashboard" : "/signup"}>
+                      {user ? "Acessar DRE" : "Começar Agora"}
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                   </Button>
@@ -218,8 +255,8 @@ export default function Landing() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Button variant="hero" size="lg" className="text-lg px-8" asChild>
-                <Link to="/signup">
-                  Começar Gratuitamente
+                <Link to={user ? "/dashboard" : "/signup"}>
+                  {user ? "Acessar Dashboard" : "Começar Gratuitamente"}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </Button>
@@ -261,6 +298,21 @@ export default function Landing() {
           </div>
         </div>
       </footer>
+
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Deseja sair da conta atual?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você será desconectado e redirecionado para a página de login.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout}>Sim, sair</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

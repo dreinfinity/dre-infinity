@@ -9,7 +9,6 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CheckoutGuard } from "@/components/CheckoutGuard";
 import { PlanFeatureGuard } from "@/components/PlanFeatureGuard";
 import Landing from "./pages/Landing";
-import Auth from "./pages/Auth";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import CompanySetup from "./pages/CompanySetup";
@@ -39,7 +38,6 @@ const App = () => {
               <Sonner />
               <Routes>
                 <Route path="/" element={<Landing />} />
-                <Route path="/auth" element={<Auth />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/pricing" element={<Pricing />} />

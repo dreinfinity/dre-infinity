@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft, Check, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/GlassCard";
 import { GradientText } from "@/components/GradientText";
@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function Pricing() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { currentPlan, daysUntilExpiry, isTrial } = useSubscription();
   const [selectedPeriod, setSelectedPeriod] = useState<BillingPeriod>("monthly");
 
@@ -70,11 +70,23 @@ export default function Pricing() {
             <ArrowLeft className="w-4 h-4" />
             Voltar
           </Button>
-          {isTrial && (
-            <div className="text-sm text-muted-foreground">
-              Teste Grátis - Faltam {daysUntilExpiry} dias
-            </div>
-          )}
+          <div className="flex items-center gap-4">
+            {isTrial && (
+              <div className="text-sm text-muted-foreground">
+                Teste Grátis - Faltam {daysUntilExpiry} dias
+              </div>
+            )}
+            {user && (
+              <Button
+                variant="ghost"
+                onClick={signOut}
+                className="gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                Sair
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="text-center mb-12 space-y-4">
