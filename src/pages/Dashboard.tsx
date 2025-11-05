@@ -52,8 +52,11 @@ import { GoalProgressIndicator } from "@/components/dashboard/GoalProgressIndica
 import { TransactionModal } from "@/components/dashboard/TransactionModal";
 import { useTransactions } from "@/hooks/useTransactions";
 import { MarkupCalculator } from "@/components/dashboard/MarkupCalculator";
+import { TourGuide } from "@/components/TourGuide";
+import { useTour, DASHBOARD_TOUR } from "@/hooks/useTour";
 
 export default function Dashboard() {
+  const { run, completeTour } = useTour("dashboard");
   const { company, companies, loading: companyLoading } = useCompany();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -278,6 +281,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      <TourGuide run={run} steps={DASHBOARD_TOUR} onComplete={completeTour} />
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">
@@ -405,7 +409,7 @@ export default function Dashboard() {
         </div>
 
       {/* DRE KPIs Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 dashboard-kpis">
         <GlassCard className="p-4 sm:p-6 relative overflow-hidden hover:shadow-glow-primary transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Lucro Líquido</h3>
@@ -727,7 +731,7 @@ export default function Dashboard() {
       )}
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 dashboard-charts">
         <GlassCard className="p-6 hover:shadow-glow-primary transition-all duration-300">
           <h3 className="text-xl font-semibold mb-4">
             <GradientText>Funil de Composição da Receita</GradientText>

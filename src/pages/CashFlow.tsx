@@ -10,8 +10,11 @@ import { DateFilter } from "@/components/cash/DateFilter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Wallet, Shield, TrendingUp, DollarSign, ArrowDownToLine, Loader2, PiggyBank } from "lucide-react";
 import { format } from "date-fns";
+import { TourGuide } from "@/components/TourGuide";
+import { useTour, CASH_TOUR } from "@/hooks/useTour";
 
 export default function CashFlow() {
+  const { run, completeTour } = useTour("cash");
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
   
@@ -49,6 +52,7 @@ export default function CashFlow() {
 
   return (
     <div className="container mx-auto p-6 space-y-8">
+      <TourGuide run={run} steps={CASH_TOUR} onComplete={completeTour} />
       {/* Header */}
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
@@ -60,7 +64,9 @@ export default function CashFlow() {
               Gerencie seus cofres e organize seus recursos financeiros
             </p>
           </div>
-          <TransferDialog />
+          <div className="transfer-button">
+            <TransferDialog />
+          </div>
         </div>
         
         <DateFilter
@@ -103,7 +109,7 @@ export default function CashFlow() {
       {/* Cofres */}
       <div>
         <h2 className="text-2xl font-bold mb-4">Cofres Virtuais</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 vault-cards">
           <VaultCard
             title="Reserva de Emergência"
             balance={balances?.emergencyReserve || 0}

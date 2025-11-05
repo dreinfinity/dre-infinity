@@ -1,15 +1,37 @@
+import { useState } from "react";
 import { GradientText } from "@/components/GradientText";
 import { GlassCard } from "@/components/GlassCard";
+import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { HelpCircle, BookOpen, Calculator, TrendingUp } from "lucide-react";
+import { HelpCircle, BookOpen, Calculator, TrendingUp, Play } from "lucide-react";
+import { TourGuide } from "@/components/TourGuide";
+import { DASHBOARD_TOUR } from "@/hooks/useTour";
 export default function Help() {
+  const [runTour, setRunTour] = useState(false);
+
+  const handleStartTour = () => {
+    setRunTour(true);
+  };
+
+  const handleCompleteTour = () => {
+    setRunTour(false);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-4xl font-bold mb-2">
-          <GradientText>Central de Ajuda</GradientText>
-        </h1>
-        <p className="text-muted-foreground">Aprenda a usar o DRE Infinity e entenda suas métricas financeiras</p>
+      <TourGuide run={runTour} steps={DASHBOARD_TOUR} onComplete={handleCompleteTour} />
+      
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-4xl font-bold mb-2">
+            <GradientText>Central de Ajuda</GradientText>
+          </h1>
+          <p className="text-muted-foreground">Aprenda a usar o DRE Infinity e entenda suas métricas financeiras</p>
+        </div>
+        <Button onClick={handleStartTour} variant="glow" className="gap-2">
+          <Play className="w-4 h-4" />
+          Ver Tutorial
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

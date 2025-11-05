@@ -7,7 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CompanyProvider } from "@/contexts/CompanyContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { CheckoutGuard } from "@/components/CheckoutGuard";
-import { PlanGuard } from "@/components/PlanGuard";
+import { PlanFeatureGuard } from "@/components/PlanFeatureGuard";
 import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Login from "./pages/Login";
@@ -22,7 +22,6 @@ import Goals from "./pages/Goals";
 import Scenarios from "./pages/Scenarios";
 import CashFlow from "./pages/CashFlow";
 import Pricing from "./pages/Pricing";
-import Checkout from "./pages/Checkout";
 import DebugData from "./pages/DebugData";
 import Help from "./pages/Help";
 import NotFound from "./pages/NotFound";
@@ -44,7 +43,6 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/pricing" element={<Pricing />} />
-                <Route path="/checkout" element={<Checkout />} />
                 
                 <Route
                   path="/company-setup"
@@ -106,9 +104,9 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <CheckoutGuard>
-                        <PlanGuard requiredPlan="growth">
+                        <PlanFeatureGuard feature="break-even">
                           <BreakEven />
-                        </PlanGuard>
+                        </PlanFeatureGuard>
                       </CheckoutGuard>
                     </ProtectedRoute>
                   }
@@ -119,9 +117,9 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <CheckoutGuard>
-                        <PlanGuard requiredPlan="growth">
+                        <PlanFeatureGuard feature="goals">
                           <Goals />
-                        </PlanGuard>
+                        </PlanFeatureGuard>
                       </CheckoutGuard>
                     </ProtectedRoute>
                   }
@@ -132,9 +130,9 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <CheckoutGuard>
-                        <PlanGuard requiredPlan="growth">
+                        <PlanFeatureGuard feature="scenarios">
                           <Scenarios />
-                        </PlanGuard>
+                        </PlanFeatureGuard>
                       </CheckoutGuard>
                     </ProtectedRoute>
                   }
@@ -145,9 +143,9 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <CheckoutGuard>
-                        <PlanGuard requiredPlan="infinity">
+                        <PlanFeatureGuard feature="cash">
                           <CashFlow />
-                        </PlanGuard>
+                        </PlanFeatureGuard>
                       </CheckoutGuard>
                     </ProtectedRoute>
                   }

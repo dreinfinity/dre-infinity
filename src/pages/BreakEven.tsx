@@ -12,6 +12,8 @@ import {
 import { useDREReport } from "@/hooks/useDREReport";
 import { useMetricsCache } from "@/hooks/useMetricsCache";
 import { TrendingUp, AlertCircle } from "lucide-react";
+import { TourGuide } from "@/components/TourGuide";
+import { useTour, BREAK_EVEN_TOUR } from "@/hooks/useTour";
 import {
   LineChart,
   Line,
@@ -25,6 +27,7 @@ import {
 } from "recharts";
 
 export default function BreakEven() {
+  const { run, completeTour } = useTour("break-even");
   const currentDate = new Date();
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
@@ -95,6 +98,7 @@ export default function BreakEven() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      <TourGuide run={run} steps={BREAK_EVEN_TOUR} onComplete={completeTour} />
       <div>
         <h1 className="text-4xl font-bold mb-2">
           <GradientText>Ponto de Equilíbrio</GradientText>
@@ -218,7 +222,7 @@ export default function BreakEven() {
           </div>
 
           {/* Gráfico de Ponto de Equilíbrio */}
-          <GlassCard className="p-6">
+          <GlassCard className="p-6 break-even-chart">
             <h2 className="text-2xl font-semibold mb-4">
               <GradientText>Gráfico de Ponto de Equilíbrio</GradientText>
             </h2>

@@ -13,10 +13,12 @@ export default function Pricing() {
   const { currentPlan, daysUntilExpiry, isTrial } = useSubscription();
   const [selectedPeriod, setSelectedPeriod] = useState<BillingPeriod>("monthly");
 
+  const { createCheckoutSession, creatingCheckout } = useSubscription();
+
   const handleSelectPlan = (plan: SubscriptionPlan) => {
     if (user) {
-      // Se logado, vai para checkout
-      navigate(`/checkout?plan=${plan}&period=${selectedPeriod}`);
+      // Se logado, cria sessão de checkout direto no Stripe
+      createCheckoutSession({ plan, period: selectedPeriod });
     } else {
       // Se não logado, vai para cadastro
       navigate(`/signup?plan=${plan}&period=${selectedPeriod}`);
@@ -175,11 +177,11 @@ export default function Pricing() {
 
                 <Button
                   onClick={() => handleSelectPlan(plan)}
-                  disabled={isCurrentPlan}
+                  disabled={isCurrentPlan || creatingCheckout}
                   variant={isPopular ? "glow" : "outline"}
                   className="w-full"
                 >
-                  {isCurrentPlan ? "Plano Atual" : "Começar Teste Grátis"}
+                  {creatingCheckout ? "Processando..." : isCurrentPlan ? "Plano Atual" : "Começar Teste Grátis"}
                 </Button>
               </GlassCard>
             );

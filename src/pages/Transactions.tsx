@@ -44,8 +44,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { TourGuide } from "@/components/TourGuide";
+import { useTour, TRANSACTIONS_TOUR } from "@/hooks/useTour";
 
 export default function Transactions() {
+  const { run, completeTour } = useTour("transactions");
   const [activeTab, setActiveTab] = useState<"administrative" | "operational">("administrative");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<any>(null);
@@ -170,6 +173,7 @@ export default function Transactions() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      <TourGuide run={run} steps={TRANSACTIONS_TOUR} onComplete={completeTour} />
       <div>
         <h1 className="text-4xl font-bold mb-2">
           <GradientText>Lançamentos</GradientText>
@@ -180,7 +184,7 @@ export default function Transactions() {
       </div>
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-        <TabsList className="glass">
+        <TabsList className="glass transaction-type-selector">
           <TabsTrigger value="administrative">Administrativos</TabsTrigger>
           <TabsTrigger value="operational">Operacionais</TabsTrigger>
         </TabsList>
@@ -223,6 +227,7 @@ export default function Transactions() {
                   <Button
                     variant="glow"
                     onClick={resetForm}
+                    className="new-transaction-button"
                   >
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Novo Lançamento
@@ -430,7 +435,7 @@ export default function Transactions() {
               </Dialog>
             </div>
 
-            <GlassCard>
+            <GlassCard className="transaction-list">
               {loading ? (
                 <div className="text-center py-8 text-muted-foreground">
                   Carregando...

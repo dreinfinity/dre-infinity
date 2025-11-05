@@ -10,6 +10,8 @@ import { GlassCard } from "@/components/GlassCard";
 import { GradientText } from "@/components/GradientText";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft } from "lucide-react";
+import { CompanyLimitGuard } from "@/components/CompanyLimitGuard";
+import { useSubscription, PLAN_FEATURES } from "@/hooks/useSubscription";
 import {
   Select,
   SelectContent,
@@ -21,6 +23,7 @@ import {
 export default function CompanySetup() {
   const { user } = useAuth();
   const { companies, refreshCompanies } = useCompany();
+  const { currentPlan } = useSubscription();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [hasExistingCompany, setHasExistingCompany] = useState(false);
@@ -56,6 +59,19 @@ export default function CompanySetup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+
+    // Check company limit before creating
+    const planLimits = PLAN_FEATURES[currentPlan as keyof typeof PLAN_FEATURES]?.limits;
+    const companyLimit = planLimits?.companies;
+    
+    if (companyLimit !== null && companies.length >= companyLimit) {
+      toast({
+        title: "Limite Atingido",
+        description: `Seu plano permite apenas ${companyLimit} ${companyLimit === 1 ? "empresa" : "empresas"}. Faça upgrade para adicionar mais.`,
+        variant: "destructive",
+      });
+      return;
+    }
 
     setLoading(true);
     try {
@@ -113,6 +129,10 @@ export default function CompanySetup() {
               : "Adicione as informações da sua empresa para começar"
             }
           </p>
+        </div>
+
+        <div className="mb-4">
+          <CompanyLimitGuard />
         </div>
 
         <GlassCard className="animate-fade-up" style={{ animationDelay: "100ms" }}>

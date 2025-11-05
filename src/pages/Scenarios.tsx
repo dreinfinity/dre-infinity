@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useDREReport } from "@/hooks/useDREReport";
 import { RefreshCw, Calculator } from "lucide-react";
+import { TourGuide } from "@/components/TourGuide";
+import { useTour, SCENARIOS_TOUR } from "@/hooks/useTour";
 import {
   Table,
   TableBody,
@@ -17,6 +19,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function Scenarios() {
+  const { run, completeTour } = useTour("scenarios");
   const currentDate = new Date();
   const { data: dreData } = useDREReport(currentDate.getMonth() + 1, currentDate.getFullYear());
 
@@ -151,6 +154,7 @@ export default function Scenarios() {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      <TourGuide run={run} steps={SCENARIOS_TOUR} onComplete={completeTour} />
       <div>
         <h1 className="text-4xl font-bold mb-2">
           <GradientText>Cenários e Simulações</GradientText>
@@ -160,7 +164,7 @@ export default function Scenarios() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 scenario-inputs">
         {/* Painel de Ajustes */}
         <GlassCard className="p-4 sm:p-6">
           <div className="flex items-center justify-between mb-4 sm:mb-6">
