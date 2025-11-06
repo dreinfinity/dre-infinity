@@ -40,14 +40,33 @@ serve(async (req) => {
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
+    logStep("User authenticated", { userId: user.id, email: user.email, createdAt: user.created_at });
+
+    // Calculate trial period (7 days from user creation)
+    const userCreatedAt = new Date(user.created_at);
+    const trialEndDate = new Date(userCreatedAt.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const now = new Date();
+    const isTrialActive = now < trialEndDate;
+    const daysRemaining = Math.max(0, Math.ceil((trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+    
+    logStep("Trial calculation", { 
+      userCreatedAt: userCreatedAt.toISOString(), 
+      trialEndDate: trialEndDate.toISOString(),
+      isTrialActive,
+      daysRemaining 
+    });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     
     if (customers.data.length === 0) {
-      logStep("No customer found");
-      return new Response(JSON.stringify({ subscribed: false, plan: 'functional', isTrial: false }), {
+      logStep("No customer found, returning trial status");
+      return new Response(JSON.stringify({ 
+        subscribed: false, 
+        plan: 'functional', 
+        isTrial: isTrialActive,
+        subscription_end: trialEndDate.toISOString()
+      }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       });
