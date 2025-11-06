@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useCompany } from "@/contexts/CompanyContext";
 import { GradientText } from "@/components/GradientText";
 import { GlassCard } from "@/components/GlassCard";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { useEffect, useState, useMemo } from "react";
 import { useDREReport } from "@/hooks/useDREReport";
 import { useMetricsCache } from "@/hooks/useMetricsCache";
@@ -280,8 +281,9 @@ export default function Dashboard() {
     : (metricsData ? (metricsData.marketingCosts + metricsData.salesCosts) : 0);
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <TourGuide run={run} steps={DASHBOARD_TOUR} onComplete={completeTour} />
+    <DashboardLayout>
+      <div className="space-y-6 animate-fade-in">
+        <TourGuide run={run} steps={DASHBOARD_TOUR} onComplete={completeTour} />
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl sm:text-4xl font-bold mb-2">
@@ -874,5 +876,6 @@ export default function Dashboard() {
         onSubmit={handleCreateTransaction}
       />
     </div>
+    </DashboardLayout>
   );
 }

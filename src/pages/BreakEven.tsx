@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GradientText } from "@/components/GradientText";
 import { GlassCard } from "@/components/GlassCard";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -97,6 +98,7 @@ export default function BreakEven() {
   }
 
   return (
+    <DashboardLayout>
     <div className="space-y-6 animate-fade-in">
       <TourGuide run={run} steps={BREAK_EVEN_TOUR} onComplete={completeTour} />
       <div>
@@ -313,5 +315,6 @@ export default function BreakEven() {
         </>
       )}
     </div>
+    </DashboardLayout>
   );
 }

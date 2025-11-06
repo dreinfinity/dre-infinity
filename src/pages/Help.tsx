@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GradientText } from "@/components/GradientText";
 import { GlassCard } from "@/components/GlassCard";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { HelpCircle, BookOpen, Calculator, TrendingUp, Play } from "lucide-react";
@@ -18,6 +19,7 @@ export default function Help() {
   };
 
   return (
+    <DashboardLayout>
     <div className="space-y-6 animate-fade-in">
       <TourGuide run={runTour} steps={DASHBOARD_TOUR} onComplete={handleCompleteTour} />
       
@@ -373,5 +375,6 @@ export default function Help() {
         </div>
       </GlassCard>
     </div>
+    </DashboardLayout>
   );
 }

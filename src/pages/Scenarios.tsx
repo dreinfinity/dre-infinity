@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GradientText } from "@/components/GradientText";
 import { GlassCard } from "@/components/GlassCard";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -153,6 +154,7 @@ export default function Scenarios() {
   ];
 
   return (
+    <DashboardLayout>
     <div className="space-y-6 animate-fade-in">
       <TourGuide run={run} steps={SCENARIOS_TOUR} onComplete={completeTour} />
       <div>
@@ -409,5 +411,6 @@ export default function Scenarios() {
         </div>
       </GlassCard>
     </div>
+    </DashboardLayout>
   );
 }

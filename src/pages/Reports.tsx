@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GradientText } from "@/components/GradientText";
 import { GlassCard } from "@/components/GlassCard";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -319,6 +320,7 @@ export default function Reports() {
     : [];
 
   return (
+    <DashboardLayout>
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-4xl font-bold mb-2">
@@ -491,5 +493,6 @@ export default function Reports() {
         )}
       </GlassCard>
     </div>
+    </DashboardLayout>
   );
 }

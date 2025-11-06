@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GradientText } from "@/components/GradientText";
 import { GlassCard } from "@/components/GlassCard";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -172,8 +173,9 @@ export default function Transactions() {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <TourGuide run={run} steps={TRANSACTIONS_TOUR} onComplete={completeTour} />
+    <DashboardLayout>
+      <div className="space-y-6 animate-fade-in">
+        <TourGuide run={run} steps={TRANSACTIONS_TOUR} onComplete={completeTour} />
       <div>
         <h1 className="text-4xl font-bold mb-2">
           <GradientText>Lançamentos</GradientText>
@@ -524,5 +526,6 @@ export default function Transactions() {
         ))}
       </Tabs>
     </div>
+    </DashboardLayout>
   );
 }

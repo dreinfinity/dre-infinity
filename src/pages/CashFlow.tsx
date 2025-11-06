@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useCashBalances } from "@/hooks/useCashBalances";
 import { GlassCard } from "@/components/GlassCard";
 import { GradientText } from "@/components/GradientText";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { VaultCard } from "@/components/cash/VaultCard";
 import { TransferDialog } from "@/components/cash/TransferDialog";
 import { TransactionList } from "@/components/cash/TransactionList";
@@ -51,6 +52,7 @@ export default function CashFlow() {
   }
 
   return (
+    <DashboardLayout>
     <div className="container mx-auto p-6 space-y-8">
       <TourGuide run={run} steps={CASH_TOUR} onComplete={completeTour} />
       {/* Header */}
@@ -186,5 +188,6 @@ export default function CashFlow() {
         </Tabs>
       </div>
     </div>
+    </DashboardLayout>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { GradientText } from "@/components/GradientText";
 import { GlassCard } from "@/components/GlassCard";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -195,11 +196,12 @@ export default function Settings() {
   const subcategories = categories.filter((c) => c.parent_id);
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div>
-        <h1 className="text-4xl font-bold mb-2">
-          <GradientText>Configurações</GradientText>
-        </h1>
+    <DashboardLayout>
+      <div className="space-y-6 animate-fade-in">
+        <div>
+          <h1 className="text-4xl font-bold mb-2">
+            <GradientText>Configurações</GradientText>
+          </h1>
         <p className="text-muted-foreground">
           Configure as categorias e clientes da sua empresa
         </p>
@@ -850,5 +852,6 @@ export default function Settings() {
         </TabsContent>
       </Tabs>
     </div>
+    </DashboardLayout>
   );
 }
