@@ -27,7 +27,7 @@ export function TourGuide({ run, steps, onComplete }: TourGuideProps) {
       styles={{
         options: {
           primaryColor: "hsl(var(--primary))",
-          zIndex: 10000,
+          zIndex: 9999,
         },
         overlay: {
           backgroundColor: "rgba(0, 0, 0, 0.7)",

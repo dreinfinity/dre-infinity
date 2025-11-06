@@ -409,7 +409,7 @@ export default function Dashboard() {
         </div>
 
       {/* DRE KPIs Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 dashboard-kpis">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 dashboard-kpis" id="dashboard-kpis">
         <GlassCard className="p-4 sm:p-6 relative overflow-hidden hover:shadow-glow-primary transition-all duration-300">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-xs sm:text-sm font-medium text-muted-foreground">Lucro Líquido</h3>
@@ -731,7 +731,7 @@ export default function Dashboard() {
       )}
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 dashboard-charts">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 dashboard-charts" id="dashboard-charts">
         <GlassCard className="p-6 hover:shadow-glow-primary transition-all duration-300">
           <h3 className="text-xl font-semibold mb-4">
             <GradientText>Funil de Composição da Receita</GradientText>

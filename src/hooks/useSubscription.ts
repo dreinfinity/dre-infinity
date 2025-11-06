@@ -121,30 +121,42 @@ export function useSubscription() {
         return null;
       }
 
+      // Calculate days until expiry from subscription_end
+      const calculateDaysUntilExpiry = (endDate: string | null): number => {
+        if (!endDate) return 0;
+        const days = Math.ceil((new Date(endDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+        return Math.max(0, days);
+      };
+
+      // If no data or no plan, return default trial state
       if (!data || !data.plan) {
+        const trialEnd = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
         return {
           plan: 'functional',
           status: 'trial',
-          trialEndsAt: null,
+          trialEndsAt: trialEnd,
           currentPeriodStart: new Date().toISOString(),
-          currentPeriodEnd: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-          isActive: false,
+          currentPeriodEnd: trialEnd,
+          isActive: true,
           isTrial: true,
-          daysUntilExpiry: 0,
+          daysUntilExpiry: 7,
         } as SubscriptionDetails;
       }
 
+      // Process subscription data
+      const daysRemaining = calculateDaysUntilExpiry(data.subscription_end);
+      const isTrialActive = data.isTrial && daysRemaining > 0;
+      const isSubscribed = data.subscribed && !data.isTrial;
+
       return {
         plan: data.plan,
-        status: data.subscribed ? 'active' : (data.isTrial ? 'trial' : 'expired'),
+        status: isSubscribed ? 'active' : (isTrialActive ? 'trial' : 'expired'),
         trialEndsAt: data.subscription_end,
         currentPeriodStart: new Date().toISOString(),
         currentPeriodEnd: data.subscription_end || new Date().toISOString(),
-        isActive: data.subscribed || data.isTrial,
+        isActive: isSubscribed || isTrialActive,
         isTrial: data.isTrial || false,
-        daysUntilExpiry: data.subscription_end
-          ? Math.max(0, Math.floor((new Date(data.subscription_end).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-          : 0,
+        daysUntilExpiry: daysRemaining,
       } as SubscriptionDetails;
     },
     enabled: !!user?.id,
