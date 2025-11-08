@@ -83,14 +83,14 @@ serve(async (req) => {
     
     const hasActiveSub = subscriptions.data.length > 0;
     let plan = 'functional';
-    let subscriptionEnd = null;
-    let isTrial = false;
+    let subscriptionEnd: string | null = null;
+    let isSubscriptionTrial = false;
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
-      isTrial = subscription.status === 'trialing';
-      logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd, isTrial });
+      isSubscriptionTrial = subscription.status === 'trialing';
+      logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd, isTrial: isSubscriptionTrial });
       
       const priceId = subscription.items.data[0].price.id;
       
@@ -104,14 +104,16 @@ serve(async (req) => {
       plan = planMapping[priceId] || 'functional';
       logStep("Determined plan", { plan, priceId });
     } else {
-      logStep("No active subscription found");
+      logStep("No active subscription found, using trial period");
+      // Se não tem subscription ativa, usa o período de trial baseado na data de criação
+      subscriptionEnd = trialEndDate.toISOString();
     }
 
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       plan,
       subscription_end: subscriptionEnd,
-      isTrial,
+      isTrial: hasActiveSub ? isSubscriptionTrial : isTrialActive,
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
